@@ -1,817 +1,720 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cprice — Compare Prices Instantly</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cprice — Sabse Sasta, Sabse Smart</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #00C853;
+    --green-dark: #009624;
+    --green-light: #E8F5E9;
+    --dark: #0D0D1A;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --white: #ffffff;
+    --card: #f9fafb;
+  }
 
-        :root {
-            --bg:          #05070f;
-            --bg2:         #080c18;
-            --surface:     rgba(255,255,255,0.035);
-            --surface2:    rgba(255,255,255,0.06);
-            --border:      rgba(255,255,255,0.08);
-            --border2:     rgba(255,255,255,0.14);
-            --gold:        #d4a843;
-            --gold2:       #f0c96b;
-            --gold-glow:   rgba(212,168,67,0.18);
-            --platinum:    #c8cdd8;
-            --ice:         #e8ecf6;
-            --muted:       #6b7490;
-            --muted2:      #8d96b3;
-            --success:     #22c55e;
-            --danger:      #ef4444;
-            --ruby:        #c0392b;
-        }
+  body {
+    font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
+    background: var(--white);
+    color: var(--text);
+    overflow-x: hidden;
+  }
 
-        html { scroll-behavior: smooth; }
+  /* ====== NAVBAR ====== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 5%;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 1000;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .nav-logo-icon {
+    width: 36px; height: 36px;
+    background: var(--green);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900; color: #fff;
+  }
+  .nav-logo-text { font-size: 22px; font-weight: 800; color: var(--dark); }
+  .nav-logo-text span { color: var(--green); }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--green); }
+  .nav-cta {
+    background: var(--green);
+    color: #fff; font-weight: 700; font-size: 14px;
+    padding: 10px 22px; border-radius: 12px;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .nav-cta:hover { background: var(--green-dark); transform: translateY(-1px); }
 
-        body {
-            background: var(--bg);
-            color: var(--ice);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+  /* ====== HERO ====== */
+  .hero {
+    padding: 120px 5% 80px;
+    background: linear-gradient(160deg, #f0fdf4 0%, #ffffff 50%, #f0fdf4 100%);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 40px; min-height: 100vh;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, #00C85315 0%, transparent 70%);
+    border-radius: 50%;
+  }
 
-        /* ── AMBIENT BACKGROUND ── */
-        .bg-canvas {
-            position: fixed; inset: 0; pointer-events: none; z-index: 0;
-            overflow: hidden;
-        }
-        .bg-canvas::before {
-            content: '';
-            position: absolute;
-            top: -30%; left: -20%;
-            width: 80vw; height: 80vw;
-            background: radial-gradient(ellipse, rgba(212,168,67,0.06) 0%, transparent 60%);
-        }
-        .bg-canvas::after {
-            content: '';
-            position: absolute;
-            bottom: -20%; right: -10%;
-            width: 60vw; height: 60vw;
-            background: radial-gradient(ellipse, rgba(100,80,200,0.05) 0%, transparent 60%);
-        }
-        .noise-overlay {
-            position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.025;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-            background-repeat: repeat;
-            background-size: 180px;
-        }
-        .grid-lines {
-            position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.025;
-            background-image:
-                linear-gradient(rgba(255,255,255,1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px);
-            background-size: 60px 60px;
-        }
+  .hero-left { max-width: 560px; z-index: 1; }
 
-        /* ── NAVBAR ── */
-        nav {
-            position: sticky; top: 0; z-index: 200;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 52px;
-            height: 72px;
-            background: rgba(5,7,15,0.82);
-            backdrop-filter: blur(28px) saturate(180%);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-left { display: flex; align-items: center; gap: 20px; }
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.55rem; font-weight: 900;
-            color: var(--ice);
-            letter-spacing: -0.5px;
-            display: flex; align-items: center; gap: 3px;
-        }
-        .logo-dot {
-            display: inline-block;
-            width: 8px; height: 8px;
-            background: var(--gold);
-            border-radius: 50%;
-            margin: 0 1px -1px;
-            box-shadow: 0 0 10px var(--gold);
-        }
-        .logo-suffix {
-            color: var(--gold);
-        }
-        .nav-divider {
-            width: 1px; height: 20px; background: var(--border2);
-        }
-        .nav-tagline {
-            font-size: 0.68rem; font-weight: 500; color: var(--muted);
-            letter-spacing: 1.8px; text-transform: uppercase;
-        }
-        .nav-right { display: flex; align-items: center; gap: 16px; }
-        .nav-badge {
-            font-size: 0.65rem; font-weight: 600;
-            color: var(--gold); letter-spacing: 2px;
-            text-transform: uppercase;
-            border: 1px solid rgba(212,168,67,0.3);
-            border-radius: 4px;
-            padding: 5px 12px;
-            background: rgba(212,168,67,0.06);
-        }
-        .nav-founder {
-            font-size: 0.7rem; font-weight: 500; color: var(--muted2);
-            letter-spacing: 0.3px;
-        }
-        .nav-founder strong {
-            color: var(--platinum);
-            font-weight: 600;
-        }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-light);
+    border: 1px solid #00C85340;
+    color: var(--green-dark);
+    font-size: 13px; font-weight: 700;
+    padding: 8px 16px; border-radius: 50px;
+    margin-bottom: 24px;
+  }
+  .hero-badge .dot {
+    width: 8px; height: 8px;
+    background: var(--green); border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
 
-        /* ── HERO ── */
-        .hero {
-            position: relative; z-index: 2;
-            text-align: center;
-            padding: 110px 20px 80px;
-        }
-        .hero-kicker {
-            display: inline-flex; align-items: center; gap: 10px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.7rem; font-weight: 600;
-            color: var(--gold); letter-spacing: 2.5px; text-transform: uppercase;
-            margin-bottom: 32px;
-        }
-        .kicker-line {
-            width: 28px; height: 1px; background: var(--gold); opacity: 0.6;
-        }
-        .live-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 0.65rem; font-weight: 600; color: var(--success);
-            letter-spacing: 1.5px;
-            background: rgba(34,197,94,0.08);
-            border: 1px solid rgba(34,197,94,0.2);
-            border-radius: 100px; padding: 4px 12px;
-        }
-        .live-dot {
-            width: 6px; height: 6px; background: var(--success);
-            border-radius: 50%;
-            animation: livepulse 2s ease-in-out infinite;
-            box-shadow: 0 0 6px var(--success);
-        }
-        @keyframes livepulse {
-            0%,100% { opacity:1; transform:scale(1); }
-            50% { opacity:0.4; transform:scale(0.7); }
-        }
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.8rem, 7vw, 5.2rem);
-            font-weight: 900; line-height: 1.05;
-            letter-spacing: -2px;
-            color: var(--ice);
-            margin-bottom: 10px;
-        }
-        .hero h1 em {
-            font-style: italic;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 60%, #fff8e7 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .hero-sub {
-            font-size: 0.95rem; color: var(--muted2);
-            max-width: 440px; margin: 22px auto 52px;
-            line-height: 1.75; font-weight: 400;
-            letter-spacing: 0.1px;
-        }
+  .hero h1 {
+    font-size: 52px; font-weight: 900; line-height: 1.1;
+    color: var(--dark); margin-bottom: 20px;
+  }
+  .hero h1 .highlight {
+    color: var(--green);
+    position: relative;
+  }
+  .hero h1 .highlight::after {
+    content: '';
+    position: absolute; bottom: 2px; left: 0; right: 0;
+    height: 3px; background: var(--green); opacity: 0.3;
+    border-radius: 2px;
+  }
 
-        /* ── SEARCH ── */
-        .search-container {
-            max-width: 680px; margin: 0 auto;
-        }
-        .search-frame {
-            position: relative;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border2);
-            border-radius: 14px;
-            display: flex; align-items: center;
-            overflow: hidden;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .search-frame:focus-within {
-            border-color: rgba(212,168,67,0.45);
-            box-shadow: 0 0 0 4px rgba(212,168,67,0.06), 0 8px 40px rgba(0,0,0,0.5);
-        }
-        .search-icon-wrap {
-            padding: 0 20px; color: var(--muted);
-            display: flex; align-items: center; flex-shrink: 0;
-        }
-        .search-frame input {
-            flex: 1; background: transparent; border: none; outline: none;
-            color: var(--ice); font-family: 'Inter', sans-serif;
-            font-size: 0.98rem; font-weight: 400;
-            padding: 20px 0;
-        }
-        .search-frame input::placeholder { color: var(--muted); }
-        .search-cta {
-            margin: 6px; flex-shrink: 0;
-            background: linear-gradient(135deg, var(--gold) 0%, #c49028 100%);
-            border: none; cursor: pointer;
-            color: #0d0a00; font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.82rem; font-weight: 700;
-            padding: 12px 24px; border-radius: 10px;
-            letter-spacing: 0.8px; text-transform: uppercase;
-            transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-            display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 18px rgba(212,168,67,0.25);
-        }
-        .search-cta:hover {
-            opacity: 0.92;
-            box-shadow: 0 6px 28px rgba(212,168,67,0.4);
-        }
-        .search-cta:active { transform: scale(0.97); }
+  .hero-sub {
+    font-size: 18px; color: var(--muted); line-height: 1.6;
+    margin-bottom: 36px;
+  }
+  .hero-sub strong { color: var(--text); }
 
-        /* Platform row */
-        .platform-row {
-            display: flex; justify-content: center; align-items: center;
-            gap: 24px; margin-top: 22px; flex-wrap: wrap;
-        }
-        .platform-label {
-            font-size: 0.65rem; letter-spacing: 1.5px;
-            color: var(--muted); text-transform: uppercase; font-weight: 500;
-        }
-        .platform-items {
-            display: flex; gap: 12px; flex-wrap: wrap;
-        }
-        .pitem {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.72rem; color: var(--muted2);
-            font-weight: 500;
-        }
-        .pitem-dot { width: 5px; height: 5px; border-radius: 50%; }
-        .pitem-sep {
-            width: 1px; height: 12px; background: var(--border);
-        }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; }
+  .btn-primary {
+    background: var(--green);
+    color: #fff; font-weight: 800; font-size: 16px;
+    padding: 16px 32px; border-radius: 14px;
+    text-decoration: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 20px #00C85340;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 30px #00C85450; }
+  .btn-secondary {
+    background: #fff; color: var(--text);
+    font-weight: 700; font-size: 16px;
+    padding: 16px 28px; border-radius: 14px;
+    text-decoration: none; border: 2px solid var(--border); cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--green); color: var(--green); }
 
-        /* ── TRUST STRIP ── */
-        .trust-strip {
-            position: relative; z-index: 2;
-            display: flex; justify-content: center; gap: 0;
-            max-width: 700px; margin: 60px auto 0;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            overflow: hidden;
-            background: var(--surface);
-            backdrop-filter: blur(20px);
-        }
-        .trust-item {
-            flex: 1; padding: 20px 24px;
-            display: flex; flex-direction: column; align-items: center;
-            gap: 4px; text-align: center;
-        }
-        .trust-item + .trust-item {
-            border-left: 1px solid var(--border);
-        }
-        .trust-num {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.7rem; font-weight: 900;
-            color: var(--gold); line-height: 1;
-        }
-        .trust-label {
-            font-size: 0.68rem; color: var(--muted); letter-spacing: 0.8px;
-            text-transform: uppercase; font-weight: 500; margin-top: 2px;
-        }
+  .hero-stats { display: flex; gap: 32px; }
+  .stat { }
+  .stat .num { font-size: 26px; font-weight: 900; color: var(--dark); }
+  .stat .num span { color: var(--green); }
+  .stat .label { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-        /* ── DIVIDER ── */
-        .section-divider {
-            display: flex; align-items: center; gap: 16px;
-            max-width: 960px; margin: 70px auto 0; padding: 0 20px;
-            position: relative; z-index: 2;
-        }
-        .section-divider::before, .section-divider::after {
-            content: ''; flex: 1; height: 1px; background: var(--border);
-        }
-        .section-divider-label {
-            font-size: 0.62rem; letter-spacing: 3px; color: var(--muted);
-            text-transform: uppercase; font-weight: 600; white-space: nowrap;
-        }
+  /* Hero right - mock phone */
+  .hero-right { flex-shrink: 0; z-index: 1; }
+  .mock-phone {
+    width: 280px;
+    background: #fff;
+    border-radius: 36px;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 0 0 6px #f3f4f6;
+    overflow: hidden;
+    padding: 16px;
+  }
+  .mock-search {
+    display: flex; align-items: center; gap: 8px;
+    background: #f3f4f6; border-radius: 12px;
+    padding: 10px 14px; margin-bottom: 14px;
+    font-size: 13px; color: #9ca3af;
+  }
+  .mock-result-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
+  .mock-item {
+    background: #f9fafb; border-radius: 12px;
+    padding: 10px 12px; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid #f0f0f0;
+  }
+  .mock-item.best { border: 1.5px solid var(--green); background: #f0fdf4; }
+  .mock-store { font-size: 18px; }
+  .mock-info { flex: 1; }
+  .mock-store-name { font-size: 12px; font-weight: 700; color: var(--dark); }
+  .mock-delivery { font-size: 10px; color: var(--muted); }
+  .mock-price { font-size: 15px; font-weight: 800; color: var(--dark); }
+  .mock-price.best { color: var(--green); }
+  .mock-badge {
+    background: var(--green); color: #fff;
+    font-size: 9px; font-weight: 800;
+    padding: 2px 7px; border-radius: 6px;
+  }
 
-        /* ── LOADING ── */
-        #loading {
-            display: none; text-align: center;
-            padding: 80px 20px; position: relative; z-index: 2;
-        }
-        .loader-ring {
-            width: 52px; height: 52px; margin: 0 auto 24px;
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            border-top-color: var(--gold);
-            animation: spin 0.9s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #loading p {
-            color: var(--muted); font-size: 0.85rem;
-            letter-spacing: 0.5px;
-        }
+  /* ====== SEARCH DEMO ====== */
+  .search-section {
+    background: var(--dark);
+    padding: 72px 5%;
+    text-align: center;
+  }
+  .search-section h2 { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 10px; }
+  .search-section p { font-size: 16px; color: #9ca3af; margin-bottom: 36px; }
+  .big-search {
+    display: flex; align-items: center;
+    background: #fff;
+    border-radius: 18px;
+    padding: 6px 6px 6px 20px;
+    max-width: 620px; margin: 0 auto 48px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .big-search input {
+    flex: 1; border: none; outline: none;
+    font-size: 16px; color: var(--text);
+    background: none; padding: 10px 0;
+  }
+  .big-search button {
+    background: var(--green); color: #fff;
+    font-weight: 800; font-size: 15px;
+    padding: 14px 28px; border-radius: 13px;
+    border: none; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .big-search button:hover { background: var(--green-dark); }
 
-        /* ── RESULTS ── */
-        #results {
-            display: none; position: relative; z-index: 2;
-            max-width: 960px; margin: 0 auto; padding: 48px 20px 100px;
-        }
+  .popular-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .tag {
+    background: #1e1e30; color: #9ca3af;
+    font-size: 13px; padding: 8px 16px;
+    border-radius: 50px; border: 1px solid #2a2a45;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .tag:hover { border-color: var(--green); color: var(--green); }
 
-        /* Product Card */
-        .product-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border2);
-            border-radius: 18px;
-            padding: 32px 36px;
-            backdrop-filter: blur(20px);
-            display: flex; gap: 32px; align-items: center;
-            margin-bottom: 40px;
-            position: relative; overflow: hidden;
-        }
-        .product-card::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212,168,67,0.4), transparent);
-        }
-        .product-img-wrap {
-            width: 110px; height: 110px; flex-shrink: 0;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid var(--border);
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        .product-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
-        .product-meta { flex: 1; }
-        .product-meta h2 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.1rem; font-weight: 600; margin-bottom: 12px;
-            line-height: 1.45; color: var(--ice);
-        }
-        .product-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-        .tag {
-            font-size: 0.68rem; font-weight: 600; padding: 4px 10px;
-            border-radius: 5px; letter-spacing: 0.5px; text-transform: uppercase;
-        }
-        .tag-best {
-            background: rgba(212,168,67,0.1); color: var(--gold);
-            border: 1px solid rgba(212,168,67,0.25);
-        }
-        .tag-saved {
-            background: rgba(34,197,94,0.08); color: var(--success);
-            border: 1px solid rgba(34,197,94,0.2);
-        }
+  /* ====== HOW IT WORKS ====== */
+  .how-section { padding: 80px 5%; background: #fff; }
+  .section-header { text-align: center; margin-bottom: 56px; }
+  .eyebrow { font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+  .section-header h2 { font-size: 38px; font-weight: 900; color: var(--dark); margin-bottom: 12px; }
+  .section-header p { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.6; }
 
-        /* Comparison section header */
-        .comparison-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 16px;
-        }
-        .comparison-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.68rem; font-weight: 600; color: var(--muted);
-            letter-spacing: 2px; text-transform: uppercase;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .comparison-title::before {
-            content: '';
-            width: 16px; height: 1px; background: var(--gold); opacity: 0.5;
-        }
+  .steps { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+  .step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px; padding: 32px 28px;
+    max-width: 260px; text-align: center;
+    position: relative; transition: all 0.2s;
+  }
+  .step:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,200,83,0.12); border-color: var(--green); }
+  .step-num {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--green); color: #fff;
+    font-size: 12px; font-weight: 800;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-icon { font-size: 44px; margin-bottom: 16px; }
+  .step h3 { font-size: 18px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+  .step p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 
-        /* Price Table */
-        .price-table-wrap {
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            background: var(--surface);
-        }
-        .price-table { width: 100%; border-collapse: collapse; }
-        .price-table thead th {
-            text-align: left;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.62rem; font-weight: 600;
-            color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px;
-            padding: 14px 20px;
-            background: rgba(255,255,255,0.02);
-            border-bottom: 1px solid var(--border);
-        }
-        .price-table tbody tr {
-            transition: background 0.2s;
-        }
-        .price-table tbody tr:hover {
-            background: rgba(255,255,255,0.025);
-        }
-        .price-table tbody td {
-            padding: 18px 20px; vertical-align: middle;
-        }
-        .price-table tbody tr + tr td {
-            border-top: 1px solid var(--border);
-        }
-        .price-table tbody tr.best-deal {
-            background: rgba(212,168,67,0.04);
-        }
-        .price-table tbody tr.best-deal td {
-            border-top-color: rgba(212,168,67,0.12);
-        }
+  /* ====== FEATURES ====== */
+  .features-section { padding: 80px 5%; background: #f9fafb; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+  .feature-card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px;
+    transition: all 0.2s;
+  }
+  .feature-card:hover { border-color: var(--green); box-shadow: 0 8px 30px rgba(0,200,83,0.10); transform: translateY(-2px); }
+  .feature-icon {
+    width: 52px; height: 52px;
+    background: var(--green-light);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin-bottom: 16px;
+  }
+  .feature-card h3 { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 
-        .store-cell { display: flex; align-items: center; gap: 14px; }
-        .store-icon {
-            width: 40px; height: 40px; border-radius: 10px;
-            border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.15rem; flex-shrink: 0;
-        }
-        .store-name {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 600; font-size: 0.92rem; color: var(--ice);
-        }
-        .store-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+  /* ====== STORES ====== */
+  .stores-section { padding: 60px 5%; background: #fff; text-align: center; }
+  .stores-section h2 { font-size: 22px; font-weight: 700; color: var(--muted); margin-bottom: 36px; }
+  .stores-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .store-pill {
+    display: flex; align-items: center; gap: 10px;
+    background: #f9fafb; border: 1px solid var(--border);
+    border-radius: 50px; padding: 12px 22px;
+    font-size: 15px; font-weight: 700; color: var(--text);
+    transition: all 0.2s;
+  }
+  .store-pill:hover { border-color: var(--green); background: var(--green-light); }
+  .store-pill .s-icon { font-size: 22px; }
 
-        .price-badge {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.35rem; font-weight: 900;
-            color: var(--ice); letter-spacing: -0.5px;
-        }
-        .price-badge.best { color: var(--gold); }
-        .price-badge.na {
-            color: var(--muted); font-size: 0.82rem;
-            font-family: 'Inter', sans-serif; font-weight: 400;
-            letter-spacing: 0;
-        }
+  /* ====== TESTIMONIALS ====== */
+  .testimonials { padding: 80px 5%; background: #f9fafb; }
+  .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+  .testi-card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 20px; padding: 24px;
+  }
+  .testi-stars { color: #F5C842; font-size: 16px; margin-bottom: 12px; }
+  .testi-text { font-size: 15px; color: var(--text); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+  .testi-user { display: flex; align-items: center; gap: 10px; }
+  .testi-avatar {
+    width: 40px; height: 40px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .testi-name { font-size: 14px; font-weight: 700; color: var(--dark); }
+  .testi-loc { font-size: 12px; color: var(--muted); }
 
-        .badge-best-deal {
-            display: inline-flex; align-items: center; gap: 5px;
-            font-size: 0.6rem; font-weight: 700; color: var(--gold);
-            background: rgba(212,168,67,0.1); border: 1px solid rgba(212,168,67,0.25);
-            border-radius: 4px; padding: 3px 9px; margin-left: 10px;
-            vertical-align: middle; letter-spacing: 1px; text-transform: uppercase;
-        }
+  /* ====== CTA BANNER ====== */
+  .cta-section {
+    padding: 80px 5%;
+    background: linear-gradient(135deg, #0D2818 0%, var(--dark) 100%);
+    text-align: center;
+  }
+  .cta-section h2 { font-size: 40px; font-weight: 900; color: #fff; margin-bottom: 14px; }
+  .cta-section p { font-size: 18px; color: #9ca3af; margin-bottom: 36px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .app-btn {
+    display: flex; align-items: center; gap: 10px;
+    background: #fff; color: var(--dark);
+    padding: 14px 24px; border-radius: 14px;
+    text-decoration: none; font-weight: 700;
+    transition: all 0.2s;
+  }
+  .app-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,255,255,0.2); }
+  .app-btn .app-icon { font-size: 28px; }
+  .app-btn .app-text { text-align: left; }
+  .app-btn .app-text small { display: block; font-size: 11px; color: var(--muted); font-weight: 400; }
+  .app-btn .app-text strong { font-size: 16px; }
 
-        .rating-cell { display: flex; align-items: center; gap: 6px; }
-        .stars { color: var(--gold); font-size: 0.8rem; letter-spacing: 1px; }
-        .rating-num {
-            font-size: 0.85rem; font-weight: 600; color: var(--platinum);
-        }
-        .rating-na { color: var(--muted); font-size: 0.82rem; }
-
-        .action-btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.72rem; font-weight: 600; padding: 9px 18px;
-            border-radius: 8px;
-            border: 1px solid rgba(212,168,67,0.25);
-            color: var(--gold); cursor: pointer; text-decoration: none;
-            background: rgba(212,168,67,0.07);
-            transition: all 0.2s; white-space: nowrap;
-            letter-spacing: 0.5px;
-        }
-        .action-btn:hover {
-            background: rgba(212,168,67,0.14);
-            border-color: rgba(212,168,67,0.5);
-            box-shadow: 0 4px 14px rgba(212,168,67,0.15);
-        }
-
-        /* ── EMPTY STATE ── */
-        .empty-state {
-            text-align: center; padding: 80px 20px;
-            display: none; position: relative; z-index: 2;
-        }
-        .empty-icon {
-            font-size: 2.8rem; margin-bottom: 20px; opacity: 0.7;
-        }
-        .empty-state h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem; color: var(--ice); margin-bottom: 10px;
-        }
-        .empty-state p { color: var(--muted); font-size: 0.88rem; }
-
-        /* ── FOOTER ── */
-        footer {
-            position: relative; z-index: 2;
-            text-align: center; padding: 52px 20px;
-            border-top: 1px solid var(--border);
-        }
-        .footer-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem; font-weight: 900;
-            color: var(--gold); margin-bottom: 12px;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .footer-logo-diamond {
-            width: 5px; height: 5px;
-            background: var(--gold); transform: rotate(45deg);
-            box-shadow: 0 0 8px var(--gold);
-        }
-        .footer-tagline {
-            font-size: 0.78rem; color: var(--muted);
-            margin-bottom: 18px; letter-spacing: 0.3px;
-        }
-        .footer-meta {
-            font-size: 0.65rem; color: var(--muted);
-            letter-spacing: 1px; text-transform: uppercase;
-        }
-        .footer-founder {
-            display: inline-flex; align-items: center; gap: 8px;
-            margin-top: 18px;
-            font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase;
-            color: var(--muted);
-            border: 1px solid var(--border);
-            border-radius: 100px; padding: 6px 16px;
-        }
-        .footer-founder strong {
-            color: var(--gold); font-weight: 600;
-        }
-        .founder-divider { color: var(--border2); }
-
-        /* ── RESPONSIVE ── */
-        @media (max-width: 640px) {
-            nav { padding: 0 20px; }
-            .nav-tagline, .nav-divider { display: none; }
-            .hero { padding: 80px 16px 60px; }
-            .hero h1 { letter-spacing: -1px; }
-            .product-card { flex-direction: column; align-items: flex-start; padding: 24px 20px; }
-            .trust-strip { max-width: 100%; margin: 48px 16px 0; }
-            .price-table thead th:nth-child(3),
-            .price-table tbody td:nth-child(3) { display: none; }
-            .price-table tbody td { padding: 14px 14px; }
-        }
-    </style>
+  /* ====== FOOTER ====== */
+  footer {
+    background: #f3f4f6; border-top: 1px solid var(--border);
+    padding: 40px 5% 24px;
+  }
+  .footer-top { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 32px; margin-bottom: 32px; }
+  .footer-brand .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .footer-brand p { font-size: 13px; color: var(--muted); max-width: 240px; line-height: 1.6; }
+  .footer-col h4 { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 14px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .footer-col ul a { text-decoration: none; font-size: 13px; color: var(--muted); transition: color 0.2s; }
+  .footer-col ul a:hover { color: var(--green); }
+  .footer-bottom { border-top: 1px solid var(--border); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-bottom p { font-size: 13px; color: var(--muted); }
+  .footer-bottom .made { font-size: 13px; color: var(--muted); }
+  .footer-bottom .made span { color: var(--green); }
+</style>
 </head>
 <body>
 
-<!-- AMBIENT -->
-<div class="bg-canvas"></div>
-<div class="noise-overlay"></div>
-<div class="grid-lines"></div>
-
 <!-- NAVBAR -->
 <nav>
-    <div class="nav-left">
-        <div class="logo">C<span class="logo-dot"></span><span class="logo-suffix">price</span></div>
-        <div class="nav-divider"></div>
-        <div class="nav-tagline">India's Price Intelligence</div>
-    </div>
-    <div class="nav-right">
-        <div class="nav-founder">By <strong>Aditya Rajput</strong></div>
-        <div class="nav-badge">India Edition</div>
-    </div>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">C</div>
+    <div class="nav-logo-text"><span>C</span>price</div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Kaise Kaam Karta Hai</a></li>
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Stores</a></li>
+    <li><a href="#">Blog</a></li>
+  </ul>
+  <a href="#" class="nav-cta">🚀 App Download Karo</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-    <div class="hero-kicker">
-        <span class="kicker-line"></span>
-        Smart Shopping
-        <span class="kicker-line"></span>
+  <div class="hero-left">
+    <div class="hero-badge">
+      <div class="dot"></div>
+      🇮🇳 India ka #1 Price Comparison App
     </div>
-    <div style="margin-bottom:24px;">
-        <div class="live-badge">
-            <div class="live-dot"></div>
-            Live Prices
-        </div>
+    <h1>Sabse <span class="highlight">Sasta</span> Price<br/>Ek Click Mein!</h1>
+    <p class="hero-sub">
+      Koi bhi product search karo — Cprice turant compare karta hai
+      <strong>Amazon, Flipkart, Meesho</strong> aur 20+ stores ka price.<br/>
+      Paise bachao, smart shopping karo! 💰
+    </p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">🔍 Abhi Search Karo</a>
+      <a href="#" class="btn-secondary">📱 App Download Karo</a>
     </div>
-    <h1>Never Overpay.<br><em>Ever Again.</em></h1>
-    <p class="hero-sub">Search any product and instantly compare prices across Amazon, Flipkart, and more — all in one place.</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="num">50<span>L+</span></div>
+        <div class="label">Products tracked</div>
+      </div>
+      <div class="stat">
+        <div class="num">20<span>+</span></div>
+        <div class="label">Stores compare</div>
+      </div>
+      <div class="stat">
+        <div class="num">₹800<span>Cr+</span></div>
+        <div class="label">Users ne bachaye</div>
+      </div>
+    </div>
+  </div>
 
-    <div class="search-container">
-        <div class="search-frame">
-            <div class="search-icon-wrap">
-                <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                </svg>
-            </div>
-            <input
-                id="searchInput"
-                type="text"
-                placeholder="Search iPhone 16, Samsung TV, Nike shoes…"
-                onkeydown="if(event.key==='Enter') comparePrice()"
-            >
-            <button class="search-cta" onclick="comparePrice()">
-                Compare
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </button>
+  <div class="hero-right">
+    <div class="mock-phone">
+      <div class="mock-search">🔍 &nbsp;iPhone 15 search kiya...</div>
+      <div class="mock-result-label">Price Comparison</div>
+      <div class="mock-item best">
+        <div class="mock-store">🛒</div>
+        <div class="mock-info">
+          <div class="mock-store-name">Flipkart <span class="mock-badge">SASTA</span></div>
+          <div class="mock-delivery">Free delivery · 2 days</div>
         </div>
-
-        <div class="platform-row">
-            <span class="platform-label">Comparing on</span>
-            <div class="platform-items">
-                <div class="pitem"><div class="pitem-dot" style="background:#f90;"></div>Amazon.in</div>
-                <div class="pitem-sep"></div>
-                <div class="pitem"><div class="pitem-dot" style="background:#2874f0;"></div>Flipkart</div>
-                <div class="pitem-sep"></div>
-                <div class="pitem"><div class="pitem-dot" style="background:var(--muted);"></div>More Soon</div>
-            </div>
+        <div class="mock-price best">₹67,999</div>
+      </div>
+      <div class="mock-item">
+        <div class="mock-store">📦</div>
+        <div class="mock-info">
+          <div class="mock-store-name">Amazon</div>
+          <div class="mock-delivery">Prime · Same day</div>
         </div>
+        <div class="mock-price">₹69,499</div>
+      </div>
+      <div class="mock-item">
+        <div class="mock-store">🏪</div>
+        <div class="mock-info">
+          <div class="mock-store-name">Croma</div>
+          <div class="mock-delivery">Store pickup</div>
+        </div>
+        <div class="mock-price">₹72,990</div>
+      </div>
+      <div style="text-align:center;margin-top:12px;">
+        <div style="background:#00C853;color:#fff;font-size:13px;font-weight:800;padding:12px;border-radius:12px;">
+          🛒 Flipkart pe Kharido — Save ₹5,000!
+        </div>
+      </div>
     </div>
-
-    <div class="trust-strip">
-        <div class="trust-item">
-            <div class="trust-num">1M+</div>
-            <div class="trust-label">Products tracked</div>
-        </div>
-        <div class="trust-item">
-            <div class="trust-num">2</div>
-            <div class="trust-label">Live platforms</div>
-        </div>
-        <div class="trust-item">
-            <div class="trust-num">100%</div>
-            <div class="trust-label">Free forever</div>
-        </div>
-    </div>
+  </div>
 </section>
 
-<!-- LOADING -->
-<div id="loading">
-    <div class="loader-ring"></div>
-    <p>Scanning prices across platforms…</p>
-</div>
+<!-- SEARCH DEMO -->
+<section class="search-section">
+  <h2>Kuch bhi search karo 🔍</h2>
+  <p>Mobile se lekar Atta tak — Cprice har cheez compare karta hai</p>
+  <div class="big-search">
+    <span style="font-size:20px;">🔍</span>
+    <input type="text" placeholder="e.g. Samsung S24, Basmati Rice, Nike Shoes..."/>
+    <button>Compare Karo →</button>
+  </div>
+  <div class="popular-tags">
+    <div class="tag">📱 iPhone 15</div>
+    <div class="tag">💻 MacBook Air</div>
+    <div class="tag">👟 Nike Shoes</div>
+    <div class="tag">📺 Samsung TV</div>
+    <div class="tag">🍚 Basmati Rice</div>
+    <div class="tag">🎧 Sony Headphones</div>
+    <div class="tag">👕 Levi's Jeans</div>
+  </div>
+</section>
 
-<!-- EMPTY STATE -->
-<div class="empty-state" id="emptyState">
-    <div class="empty-icon">🔍</div>
-    <h3>No results found</h3>
-    <p>Try a different product name or check the spelling.</p>
-</div>
+<!-- TODAY'S DEAL - REAL PRODUCT -->
+<section style="padding: 60px 5%; background: #fff;">
+  <div class="section-header">
+    <div class="eyebrow">🔥 Aaj Ka Deal</div>
+    <h2>Real Products — Real Savings! 💰</h2>
+    <p>Cprice verified deals — seedha Amazon se!</p>
+  </div>
 
-<!-- RESULTS -->
-<div id="results">
+  <div style="max-width: 340px; margin: 0 auto; background: #f9fafb; border: 2px solid #00C853; border-radius: 24px; padding: 24px; box-shadow: 0 8px 30px rgba(0,200,83,0.12);">
 
-    <div class="product-card" id="productCard">
-        <div class="product-img-wrap">
-            <img id="productImage" src="" alt="Product">
+    <!-- Best deal badge -->
+    <div style="display:inline-block; background:#00C853; color:#fff; font-size:11px; font-weight:800; padding:4px 12px; border-radius:20px; margin-bottom:16px; letter-spacing:1px;">
+      ✅ CPRICE VERIFIED DEAL
+    </div>
+
+    <!-- Product image placeholder -->
+    <div style="background:#e8f5e9; border-radius:16px; height:160px; display:flex; align-items:center; justify-content:center; font-size:72px; margin-bottom:16px;">
+      🎒
+    </div>
+
+    <!-- Product name -->
+    <div style="font-size:15px; font-weight:800; color:#1a1a2e; margin-bottom:6px; line-height:1.4;">
+      HOT SHOT PHANTOM-X Backpack
+    </div>
+    <div style="font-size:12px; color:#6b7280; margin-bottom:14px;">
+      Detachable Key Ring · Trolley Sleeve · Laptop Compartment
+    </div>
+
+    <!-- Price -->
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+      <span style="font-size:28px; font-weight:900; color:#00C853;">₹998</span>
+      <span style="font-size:14px; color:#9ca3af; text-decoration:line-through;">₹1,499</span>
+      <span style="background:#00C85220; color:#00C853; font-size:11px; font-weight:800; padding:3px 8px; border-radius:8px;">33% OFF</span>
+    </div>
+
+    <!-- Commission info (for you) -->
+    <div style="background:#fff3e0; border-radius:10px; padding:8px 12px; margin-bottom:16px; font-size:12px; color:#e65100;">
+      💰 Aapka Commission: <strong>₹99.8</strong> (10%) — har sale pe!
+    </div>
+
+    <!-- Store comparison -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px; font-weight:700; color:#9ca3af; letter-spacing:1px; margin-bottom:8px;">STORE COMPARISON</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #e5e7eb;">
+        <span style="font-size:13px;">📦 Amazon</span>
+        <span style="font-size:14px; font-weight:800; color:#00C853;">₹998 ✅</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #e5e7eb;">
+        <span style="font-size:13px;">🛒 Flipkart</span>
+        <span style="font-size:14px; font-weight:600; color:#6b7280;">₹1,199</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
+        <span style="font-size:13px;">📲 Meesho</span>
+        <span style="font-size:14px; font-weight:600; color:#6b7280;">₹1,099</span>
+      </div>
+    </div>
+
+    <!-- Buy button with affiliate link -->
+    <a href="https://amzn.to/4xizRAm"
+       target="_blank"
+       style="display:block; background:#00C853; color:#fff; text-align:center; font-size:16px; font-weight:800; padding:16px; border-radius:14px; text-decoration:none; box-shadow:0 4px 20px rgba(0,200,83,0.35); transition:all 0.2s;">
+      🛒 Amazon pe Kharido — ₹998
+    </a>
+
+    <div style="text-align:center; margin-top:10px; font-size:11px; color:#9ca3af;">
+      🔒 Secure checkout · Amazon pe direct jayenge
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="section-header">
+    <div class="eyebrow">Kaise Kaam Karta Hai</div>
+    <h2>3 Steps mein Sasta Dhundo 🎯</h2>
+    <p>Itna aasaan hai ki aap sochoge — yeh pehle kyun nahi tha!</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-icon">🔍</div>
+      <h3>Product Search Karo</h3>
+      <p>Koi bhi product ka naam type karo ya barcode scan karo — result aayega turant!</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-icon">⚖️</div>
+      <h3>Prices Compare Karo</h3>
+      <p>20+ stores ka price ek jagah dekho — Amazon, Flipkart, Meesho, Croma sab ek saath!</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-icon">💰</div>
+      <h3>Sasta Kharido!</h3>
+      <p>Sabse kam price wali site pe directly click karo aur paise bachao. Itna simple!</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="section-header">
+    <div class="eyebrow">Features</div>
+    <h2>Jo koi aur nahi deta ✨</h2>
+    <p>Cprice sirf price nahi dikhata — aapka pura shopping experience smart banata hai</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📉</div>
+      <h3>Price History Graph</h3>
+      <p>6 mahine ka price track dekho. Kab sasta tha, kab mehenga — sab pata chalega buying ka sahi time!</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔔</div>
+      <h3>Price Drop Alert</h3>
+      <p>Apna target price set karo — jab price girega, Cprice aapko WhatsApp ya email pe notify karega!</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏷️</div>
+      <h3>Coupon & Cashback</h3>
+      <p>Hidden coupons aur cashback offers jo aur koi nahi batata — Cprice automatically apply karta hai!</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>AI Smart Suggestion</h3>
+      <p>"Yeh product agle week mein sasta hoga" — Cprice ka AI aapko pehle se bata deta hai!</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">❤️</div>
+      <h3>Wishlist & Tracking</h3>
+      <p>Apne favorite products save karo. Jab bhi price drop ho, aapko instantly pata chalega!</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Best Time to Buy</h3>
+      <p>Sale kab aayegi? Festival offers kab tak chalenge? Cprice sab predict karta hai!</p>
+    </div>
+  </div>
+</section>
+
+<!-- STORES -->
+<section class="stores-section">
+  <h2>Hum in stores se compare karte hain 🏪</h2>
+  <div class="stores-row">
+    <div class="store-pill"><span class="s-icon">📦</span> Amazon</div>
+    <div class="store-pill"><span class="s-icon">🛒</span> Flipkart</div>
+    <div class="store-pill"><span class="s-icon">📲</span> Meesho</div>
+    <div class="store-pill"><span class="s-icon">👗</span> Myntra</div>
+    <div class="store-pill"><span class="s-icon">🏪</span> Croma</div>
+    <div class="store-pill"><span class="s-icon">🥦</span> BigBasket</div>
+    <div class="store-pill"><span class="s-icon">⚡</span> Blinkit</div>
+    <div class="store-pill"><span class="s-icon">🧴</span> Nykaa</div>
+    <div class="store-pill"><span class="s-icon">🏠</span> Reliance Digital</div>
+    <div class="store-pill"><span class="s-icon">➕</span> 15+ aur bhi</div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-header">
+    <div class="eyebrow">Log Kya Kehte Hain</div>
+    <h2>Lakho Indians ka bharosa 🙌</h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <p class="testi-text">"iPhone lena tha, soch raha tha Amazon se lunga. Cprice ne bataya Flipkart pe ₹4,500 sasta hai. Yaar, game changer hai yeh app!"</p>
+      <div class="testi-user">
+        <div class="testi-avatar">👨</div>
+        <div>
+          <div class="testi-name">Rahul Sharma</div>
+          <div class="testi-loc">Delhi · Tech Enthusiast</div>
         </div>
-        <div class="product-meta">
-            <h2 id="productTitle"></h2>
-            <div class="product-tags" id="productTags"></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <p class="testi-text">"Ghar ka saman, bachon ke kapde, sab Cprice se compare karke kharidti hoon. Is mahine ₹3,200 bacha liye! Bahut acha app hai."</p>
+      <div class="testi-user">
+        <div class="testi-avatar">👩</div>
+        <div>
+          <div class="testi-name">Priya Verma</div>
+          <div class="testi-loc">Mumbai · Homemaker</div>
         </div>
+      </div>
     </div>
+    <div class="testi-card">
+      <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+      <p class="testi-text">"Price drop alert feature mast hai! TV ka price set kiya tha, 2 hafte baad notification aaya — ₹8,000 sasta ho gaya tha. Turant kharida!"</p>
+      <div class="testi-user">
+        <div class="testi-avatar">👨‍💼</div>
+        <div>
+          <div class="testi-name">Amit Patel</div>
+          <div class="testi-loc">Ahmedabad · Business Owner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <div class="comparison-header">
-        <div class="comparison-title">Price Comparison</div>
-    </div>
-
-    <div class="price-table-wrap">
-        <table class="price-table" id="priceTable">
-            <thead>
-                <tr>
-                    <th>Store</th>
-                    <th>Price</th>
-                    <th>Rating</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="priceBody"></tbody>
-        </table>
-    </div>
-</div>
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ab aur zyada mat bharo! 💸</h2>
+  <p>Cprice download karo — pehli shopping mein hi paise bachana shuru karo</p>
+  <div class="cta-btns">
+    <a href="#" class="app-btn">
+      <div class="app-icon">🤖</div>
+      <div class="app-text">
+        <small>Download on</small>
+        <strong>Google Play</strong>
+      </div>
+    </a>
+    <a href="#" class="app-btn">
+      <div class="app-icon">🍎</div>
+      <div class="app-text">
+        <small>Download on</small>
+        <strong>App Store</strong>
+      </div>
+    </a>
+    <a href="#" class="btn-primary" style="padding: 14px 28px;">
+      🌐 Website Use Karo
+    </a>
+  </div>
+</section>
 
 <!-- FOOTER -->
 <footer>
-    <div class="footer-logo">
-        <div class="footer-logo-diamond"></div>
-        Cprice.in
-        <div class="footer-logo-diamond"></div>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">
+        <div class="nav-logo-icon" style="width:32px;height:32px;background:#00C853;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;">C</div>
+        <span style="font-size:18px;font-weight:800;color:#1a1a2e;"><span style="color:#00C853">C</span>price</span>
+      </div>
+      <p>India ka sabse smart price comparison platform. Compare karo, bachao karo!</p>
     </div>
-    <p class="footer-tagline">Prices sourced live from retail APIs · Always free, always accurate</p>
-    <p class="footer-meta">India's trusted price comparison engine</p>
-    <div class="footer-founder">
-        <span>Founded by</span>
-        <span class="founder-divider">·</span>
-        <strong>Aditya Rajput</strong>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">Hamare Baare Mein</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
     </div>
+    <div class="footer-col">
+      <h4>Help</h4>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Contact Karo</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Use</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Popular Searches</h4>
+      <ul>
+        <li><a href="#">iPhone Price Compare</a></li>
+        <li><a href="#">Samsung Galaxy Deals</a></li>
+        <li><a href="#">Laptop Sasta Kahan</a></li>
+        <li><a href="#">TV Best Price</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Cprice. All rights reserved.</p>
+    <p class="made">Made with <span>❤️</span> in India 🇮🇳</p>
+  </div>
 </footer>
 
-<script>
-    const stores = [
-        {
-            key: 'amazon', name: 'Amazon', sub: 'amazon.in',
-            icon: '📦', iconBg: 'rgba(255,153,0,0.1)', color: '#f90',
-        },
-        {
-            key: 'flipkart', name: 'Flipkart', sub: 'flipkart.com',
-            icon: '🛒', iconBg: 'rgba(40,116,240,0.1)', color: '#2874f0',
-        }
-    ];
-
-    function formatINR(n) {
-        return '₹' + Number(n).toLocaleString('en-IN');
-    }
-
-    function renderStars(rating) {
-        if (!rating) return '';
-        const r = parseFloat(rating);
-        const full = Math.floor(r);
-        const half = r - full >= 0.5 ? 1 : 0;
-        return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(5 - full - half);
-    }
-
-    async function comparePrice() {
-        const query = document.getElementById('searchInput').value.trim();
-        if (!query) { document.getElementById('searchInput').focus(); return; }
-
-        document.getElementById('results').style.display = 'none';
-        document.getElementById('emptyState').style.display = 'none';
-        document.getElementById('loading').style.display = 'block';
-
-        try {
-            const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
-            const data = await res.json();
-            document.getElementById('loading').style.display = 'none';
-
-            if (!data.products || data.products.length === 0) {
-                document.getElementById('emptyState').style.display = 'block';
-                return;
-            }
-
-            const p = data.products[0];
-            const price = Number(p.price) || 0;
-
-            document.getElementById('productTitle').textContent = p.title || 'Product';
-            const img = document.getElementById('productImage');
-            img.src = p.image || '';
-            img.onerror = () => {
-                img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><text y="55" font-size="55">📦</text></svg>';
-            };
-
-            const tagsEl = document.getElementById('productTags');
-            tagsEl.innerHTML = '';
-            if (price) tagsEl.innerHTML += `<span class="tag tag-best">Best ₹${Number(price).toLocaleString('en-IN')}</span>`;
-            if (p.rating) tagsEl.innerHTML += `<span class="tag tag-saved">⭐ ${p.rating} Rated</span>`;
-
-            const rows = stores.map((store) => {
-                const isAmazon = store.key === 'amazon';
-                return {
-                    store,
-                    storePrice: isAmazon ? price : null,
-                    storeRating: isAmazon ? (p.rating || null) : null,
-                    storeUrl: isAmazon ? (p.url || '#') : null,
-                    isBest: isAmazon && price > 0
-                };
-            });
-
-            const prices = rows.map(r => r.storePrice).filter(Boolean);
-            const minPrice = prices.length ? Math.min(...prices) : 0;
-            const tbody = document.getElementById('priceBody');
-            tbody.innerHTML = '';
-
-            rows.forEach(({ store, storePrice, storeRating, storeUrl, isBest }) => {
-                const isLowest = storePrice && storePrice === minPrice && prices.length > 0;
-                const tr = document.createElement('tr');
-                if (isLowest) tr.classList.add('best-deal');
-
-                tr.innerHTML = `
-                    <td>
-                        <div class="store-cell">
-                            <div class="store-icon" style="background:${store.iconBg}">
-                                ${store.icon}
-                            </div>
-                            <div>
-                                <div class="store-name">${store.name}
-                                    ${isLowest ? '<span class="badge-best-deal">★ Best Deal</span>' : ''}
-                                </div>
-                                <div class="store-sub">${store.sub}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        ${storePrice
-                            ? `<span class="price-badge ${isLowest ? 'best' : ''}">${formatINR(storePrice)}</span>`
-                            : `<span class="price-badge na">Not available yet</span>`
-                        }
-                    </td>
-                    <td>
-                        ${storeRating
-                            ? `<div class="rating-cell">
-                                    <span class="stars">${renderStars(storeRating)}</span>
-                                    <span class="rating-num">${storeRating}</span>
-                               </div>`
-                            : `<span class="rating-na">—</span>`
-                        }
-                    </td>
-                    <td>
-                        ${storeUrl
-                            ? `<a href="${storeUrl}" target="_blank" class="action-btn">
-                                    View
-                                    <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
-                                    </svg>
-                               </a>`
-                            : `<span style="color:var(--muted);font-size:0.75rem;letter-spacing:0.3px;">Coming soon</span>`
-                        }
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('results').style.display = 'block';
-
-        } catch (err) {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('emptyState').style.display = 'block';
-            console.error(err);
-        }
-    }
-</script>
 </body>
 </html>
