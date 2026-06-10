@@ -139,7 +139,7 @@ async function comparePrice(){
 
         let response =
             await fetch(
-                `http://127.0.0.1:5000/search?q=${encodeURIComponent(product)}`
+                `/search?q=${encodeURIComponent(product)}`
             );
 
         let data =
@@ -159,10 +159,10 @@ async function comparePrice(){
             data.products[0];
 
         document.getElementById("productTitle").innerText =
-            firstProduct.title;
+            firstProduct.title || "Product";
 
         document.getElementById("productImage").src =
-            firstProduct.image;
+            firstProduct.image || "";
 
         document.getElementById("amazonPrice").innerText =
             "₹" +
@@ -170,10 +170,10 @@ async function comparePrice(){
             .toLocaleString("en-IN");
 
         document.getElementById("amazonRating").innerText =
-            firstProduct.rating + " ⭐";
+            (firstProduct.rating || "N/A") + " ⭐";
 
         document.getElementById("amazonLink").href =
-            firstProduct.url;
+            firstProduct.url || "#";
 
         document.getElementById("productInfo").style.display =
             "block";
