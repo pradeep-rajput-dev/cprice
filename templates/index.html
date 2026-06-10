@@ -5,384 +5,625 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cprice — Compare Prices Instantly</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg:        #080c18;
-            --surface:   rgba(255,255,255,0.05);
-            --border:    rgba(255,255,255,0.10);
-            --accent:    #4f8ef7;
-            --accent2:   #a78bfa;
-            --gold:      #f5c842;
-            --text:      #e8edf8;
-            --muted:     #7a85a3;
-            --success:   #34d399;
-            --danger:    #f87171;
+            --bg:          #05070f;
+            --bg2:         #080c18;
+            --surface:     rgba(255,255,255,0.035);
+            --surface2:    rgba(255,255,255,0.06);
+            --border:      rgba(255,255,255,0.08);
+            --border2:     rgba(255,255,255,0.14);
+            --gold:        #d4a843;
+            --gold2:       #f0c96b;
+            --gold-glow:   rgba(212,168,67,0.18);
+            --platinum:    #c8cdd8;
+            --ice:         #e8ecf6;
+            --muted:       #6b7490;
+            --muted2:      #8d96b3;
+            --success:     #22c55e;
+            --danger:      #ef4444;
+            --ruby:        #c0392b;
         }
 
         html { scroll-behavior: smooth; }
 
         body {
             background: var(--bg);
-            color: var(--text);
+            color: var(--ice);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* ── BACKGROUND ORBS ── */
-        .bg-orbs {
+        /* ── AMBIENT BACKGROUND ── */
+        .bg-canvas {
             position: fixed; inset: 0; pointer-events: none; z-index: 0;
+            overflow: hidden;
         }
-        .orb {
-            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.18;
+        .bg-canvas::before {
+            content: '';
+            position: absolute;
+            top: -30%; left: -20%;
+            width: 80vw; height: 80vw;
+            background: radial-gradient(ellipse, rgba(212,168,67,0.06) 0%, transparent 60%);
         }
-        .orb1 { width: 600px; height: 600px; background: #4f8ef7; top: -200px; left: -150px; }
-        .orb2 { width: 500px; height: 500px; background: #a78bfa; bottom: -150px; right: -100px; }
-        .orb3 { width: 300px; height: 300px; background: #f5c842; top: 40%; left: 60%; }
+        .bg-canvas::after {
+            content: '';
+            position: absolute;
+            bottom: -20%; right: -10%;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(ellipse, rgba(100,80,200,0.05) 0%, transparent 60%);
+        }
+        .noise-overlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 180px;
+        }
+        .grid-lines {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.025;
+            background-image:
+                linear-gradient(rgba(255,255,255,1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
 
         /* ── NAVBAR ── */
         nav {
-            position: sticky; top: 0; z-index: 100;
+            position: sticky; top: 0; z-index: 200;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 18px 40px;
-            background: rgba(8,12,24,0.75);
-            backdrop-filter: blur(20px);
+            padding: 0 52px;
+            height: 72px;
+            background: rgba(5,7,15,0.82);
+            backdrop-filter: blur(28px) saturate(180%);
             border-bottom: 1px solid var(--border);
         }
+        .nav-left { display: flex; align-items: center; gap: 20px; }
         .logo {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.6rem; font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.55rem; font-weight: 900;
+            color: var(--ice);
             letter-spacing: -0.5px;
+            display: flex; align-items: center; gap: 3px;
         }
-        .logo span { -webkit-text-fill-color: var(--gold); }
+        .logo-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            margin: 0 1px -1px;
+            box-shadow: 0 0 10px var(--gold);
+        }
+        .logo-suffix {
+            color: var(--gold);
+        }
+        .nav-divider {
+            width: 1px; height: 20px; background: var(--border2);
+        }
+        .nav-tagline {
+            font-size: 0.68rem; font-weight: 500; color: var(--muted);
+            letter-spacing: 1.8px; text-transform: uppercase;
+        }
+        .nav-right { display: flex; align-items: center; gap: 16px; }
         .nav-badge {
-            font-size: 0.72rem; font-weight: 500; color: var(--muted);
-            border: 1px solid var(--border); border-radius: 20px;
-            padding: 4px 12px; letter-spacing: 0.5px;
+            font-size: 0.65rem; font-weight: 600;
+            color: var(--gold); letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid rgba(212,168,67,0.3);
+            border-radius: 4px;
+            padding: 5px 12px;
+            background: rgba(212,168,67,0.06);
+        }
+        .nav-founder {
+            font-size: 0.7rem; font-weight: 500; color: var(--muted2);
+            letter-spacing: 0.3px;
+        }
+        .nav-founder strong {
+            color: var(--platinum);
+            font-weight: 600;
         }
 
         /* ── HERO ── */
         .hero {
-            position: relative; z-index: 1;
+            position: relative; z-index: 2;
             text-align: center;
-            padding: 90px 20px 60px;
+            padding: 110px 20px 80px;
         }
-        .hero-eyebrow {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-size: 0.78rem; font-weight: 500; color: var(--accent);
-            letter-spacing: 1.5px; text-transform: uppercase;
-            background: rgba(79,142,247,0.12);
-            border: 1px solid rgba(79,142,247,0.25);
-            border-radius: 20px; padding: 6px 16px;
-            margin-bottom: 28px;
+        .hero-kicker {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem; font-weight: 600;
+            color: var(--gold); letter-spacing: 2.5px; text-transform: uppercase;
+            margin-bottom: 32px;
         }
-        .pulse-dot {
-            width: 7px; height: 7px; background: var(--accent);
+        .kicker-line {
+            width: 28px; height: 1px; background: var(--gold); opacity: 0.6;
+        }
+        .live-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.65rem; font-weight: 600; color: var(--success);
+            letter-spacing: 1.5px;
+            background: rgba(34,197,94,0.08);
+            border: 1px solid rgba(34,197,94,0.2);
+            border-radius: 100px; padding: 4px 12px;
+        }
+        .live-dot {
+            width: 6px; height: 6px; background: var(--success);
             border-radius: 50%;
-            animation: pulse 1.8s ease-in-out infinite;
+            animation: livepulse 2s ease-in-out infinite;
+            box-shadow: 0 0 6px var(--success);
         }
-        @keyframes pulse {
-            0%,100% { opacity:1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.7); }
+        @keyframes livepulse {
+            0%,100% { opacity:1; transform:scale(1); }
+            50% { opacity:0.4; transform:scale(0.7); }
         }
         .hero h1 {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(2.4rem, 6vw, 4.2rem);
-            font-weight: 800; line-height: 1.1;
-            margin-bottom: 18px;
-            letter-spacing: -1px;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.8rem, 7vw, 5.2rem);
+            font-weight: 900; line-height: 1.05;
+            letter-spacing: -2px;
+            color: var(--ice);
+            margin-bottom: 10px;
         }
-        .hero h1 .gradient {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+        .hero h1 em {
+            font-style: italic;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 60%, #fff8e7 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .hero p {
-            font-size: 1.05rem; color: var(--muted); max-width: 520px;
-            margin: 0 auto 48px; line-height: 1.7;
+        .hero-sub {
+            font-size: 0.95rem; color: var(--muted2);
+            max-width: 440px; margin: 22px auto 52px;
+            line-height: 1.75; font-weight: 400;
+            letter-spacing: 0.1px;
         }
 
-        /* ── SEARCH BOX ── */
-        .search-wrap {
-            position: relative; max-width: 640px; margin: 0 auto;
+        /* ── SEARCH ── */
+        .search-container {
+            max-width: 680px; margin: 0 auto;
         }
-        .search-glow {
-            position: absolute; inset: -3px; border-radius: 18px;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            opacity: 0; transition: opacity 0.3s;
-            filter: blur(8px); z-index: -1;
-        }
-        .search-wrap:focus-within .search-glow { opacity: 0.6; }
-        .search-inner {
-            display: flex; gap: 0;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid var(--border);
-            border-radius: 16px;
+        .search-frame {
+            position: relative;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border2);
+            border-radius: 14px;
+            display: flex; align-items: center;
             overflow: hidden;
-            backdrop-filter: blur(20px);
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        .search-wrap:focus-within .search-inner { border-color: rgba(79,142,247,0.5); }
-        .search-icon {
-            padding: 0 18px; display: flex; align-items: center; color: var(--muted);
+        .search-frame:focus-within {
+            border-color: rgba(212,168,67,0.45);
+            box-shadow: 0 0 0 4px rgba(212,168,67,0.06), 0 8px 40px rgba(0,0,0,0.5);
         }
-        .search-inner input {
+        .search-icon-wrap {
+            padding: 0 20px; color: var(--muted);
+            display: flex; align-items: center; flex-shrink: 0;
+        }
+        .search-frame input {
             flex: 1; background: transparent; border: none; outline: none;
-            color: var(--text); font-family: 'Inter', sans-serif;
-            font-size: 1rem; padding: 18px 0;
+            color: var(--ice); font-family: 'Inter', sans-serif;
+            font-size: 0.98rem; font-weight: 400;
+            padding: 20px 0;
         }
-        .search-inner input::placeholder { color: var(--muted); }
-        .search-btn {
-            background: linear-gradient(135deg, var(--accent), #3b7de8);
+        .search-frame input::placeholder { color: var(--muted); }
+        .search-cta {
+            margin: 6px; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--gold) 0%, #c49028 100%);
             border: none; cursor: pointer;
-            color: white; font-family: 'Inter', sans-serif;
-            font-size: 0.9rem; font-weight: 600;
-            padding: 0 28px; letter-spacing: 0.3px;
-            transition: opacity 0.2s, transform 0.1s;
+            color: #0d0a00; font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.82rem; font-weight: 700;
+            padding: 12px 24px; border-radius: 10px;
+            letter-spacing: 0.8px; text-transform: uppercase;
+            transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
             display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 18px rgba(212,168,67,0.25);
         }
-        .search-btn:hover { opacity: 0.9; }
-        .search-btn:active { transform: scale(0.97); }
-        .search-btn svg { transition: transform 0.2s; }
-        .search-btn:hover svg { transform: translateX(2px); }
+        .search-cta:hover {
+            opacity: 0.92;
+            box-shadow: 0 6px 28px rgba(212,168,67,0.4);
+        }
+        .search-cta:active { transform: scale(0.97); }
 
-        /* ── PLATFORM PILLS ── */
-        .platform-pills {
-            display: flex; justify-content: center; flex-wrap: wrap;
-            gap: 10px; margin-top: 24px;
+        /* Platform row */
+        .platform-row {
+            display: flex; justify-content: center; align-items: center;
+            gap: 24px; margin-top: 22px; flex-wrap: wrap;
         }
-        .pill {
-            font-size: 0.75rem; color: var(--muted);
-            border: 1px solid var(--border);
-            border-radius: 20px; padding: 5px 14px;
+        .platform-label {
+            font-size: 0.65rem; letter-spacing: 1.5px;
+            color: var(--muted); text-transform: uppercase; font-weight: 500;
+        }
+        .platform-items {
+            display: flex; gap: 12px; flex-wrap: wrap;
+        }
+        .pitem {
             display: flex; align-items: center; gap: 6px;
+            font-size: 0.72rem; color: var(--muted2);
+            font-weight: 500;
         }
-        .pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .pitem-dot { width: 5px; height: 5px; border-radius: 50%; }
+        .pitem-sep {
+            width: 1px; height: 12px; background: var(--border);
+        }
+
+        /* ── TRUST STRIP ── */
+        .trust-strip {
+            position: relative; z-index: 2;
+            display: flex; justify-content: center; gap: 0;
+            max-width: 700px; margin: 60px auto 0;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+        }
+        .trust-item {
+            flex: 1; padding: 20px 24px;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 4px; text-align: center;
+        }
+        .trust-item + .trust-item {
+            border-left: 1px solid var(--border);
+        }
+        .trust-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem; font-weight: 900;
+            color: var(--gold); line-height: 1;
+        }
+        .trust-label {
+            font-size: 0.68rem; color: var(--muted); letter-spacing: 0.8px;
+            text-transform: uppercase; font-weight: 500; margin-top: 2px;
+        }
+
+        /* ── DIVIDER ── */
+        .section-divider {
+            display: flex; align-items: center; gap: 16px;
+            max-width: 960px; margin: 70px auto 0; padding: 0 20px;
+            position: relative; z-index: 2;
+        }
+        .section-divider::before, .section-divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--border);
+        }
+        .section-divider-label {
+            font-size: 0.62rem; letter-spacing: 3px; color: var(--muted);
+            text-transform: uppercase; font-weight: 600; white-space: nowrap;
+        }
 
         /* ── LOADING ── */
         #loading {
             display: none; text-align: center;
-            padding: 60px 20px; position: relative; z-index: 1;
+            padding: 80px 20px; position: relative; z-index: 2;
         }
-        .spinner {
-            width: 44px; height: 44px; margin: 0 auto 20px;
-            border: 3px solid var(--border);
-            border-top-color: var(--accent);
+        .loader-ring {
+            width: 52px; height: 52px; margin: 0 auto 24px;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            border: 2px solid var(--border);
+            border-top-color: var(--gold);
+            animation: spin 0.9s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        #loading p { color: var(--muted); font-size: 0.9rem; }
+        #loading p {
+            color: var(--muted); font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
 
         /* ── RESULTS ── */
         #results {
-            display: none; position: relative; z-index: 1;
-            max-width: 960px; margin: 0 auto; padding: 40px 20px 80px;
+            display: none; position: relative; z-index: 2;
+            max-width: 960px; margin: 0 auto; padding: 48px 20px 100px;
         }
 
         /* Product Card */
         .product-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 28px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border2);
+            border-radius: 18px;
+            padding: 32px 36px;
             backdrop-filter: blur(20px);
-            display: flex; gap: 28px; align-items: center;
-            margin-bottom: 32px;
+            display: flex; gap: 32px; align-items: center;
+            margin-bottom: 40px;
+            position: relative; overflow: hidden;
+        }
+        .product-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,168,67,0.4), transparent);
         }
         .product-img-wrap {
-            width: 120px; height: 120px; flex-shrink: 0;
-            border-radius: 14px;
-            background: rgba(255,255,255,0.08);
+            width: 110px; height: 110px; flex-shrink: 0;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
             overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
-        .product-img-wrap img {
-            width: 100%; height: 100%; object-fit: contain;
-        }
+        .product-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
         .product-meta { flex: 1; }
         .product-meta h2 {
-            font-size: 1.15rem; font-weight: 600; margin-bottom: 10px; line-height: 1.4;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem; font-weight: 600; margin-bottom: 12px;
+            line-height: 1.45; color: var(--ice);
         }
         .product-tags { display: flex; gap: 8px; flex-wrap: wrap; }
         .tag {
-            font-size: 0.72rem; font-weight: 500; padding: 4px 10px;
-            border-radius: 6px; letter-spacing: 0.3px;
+            font-size: 0.68rem; font-weight: 600; padding: 4px 10px;
+            border-radius: 5px; letter-spacing: 0.5px; text-transform: uppercase;
         }
-        .tag-best { background: rgba(245,200,66,0.15); color: var(--gold); border: 1px solid rgba(245,200,66,0.3); }
-        .tag-saved { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
+        .tag-best {
+            background: rgba(212,168,67,0.1); color: var(--gold);
+            border: 1px solid rgba(212,168,67,0.25);
+        }
+        .tag-saved {
+            background: rgba(34,197,94,0.08); color: var(--success);
+            border: 1px solid rgba(34,197,94,0.2);
+        }
 
-        /* Section heading */
-        .section-heading {
-            font-size: 0.75rem; font-weight: 600; color: var(--muted);
-            text-transform: uppercase; letter-spacing: 1.5px;
-            margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+        /* Comparison section header */
+        .comparison-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px;
         }
-        .section-heading::after {
-            content: ''; flex: 1; height: 1px; background: var(--border);
+        .comparison-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.68rem; font-weight: 600; color: var(--muted);
+            letter-spacing: 2px; text-transform: uppercase;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .comparison-title::before {
+            content: '';
+            width: 16px; height: 1px; background: var(--gold); opacity: 0.5;
         }
 
         /* Price Table */
-        .price-table {
-            width: 100%; border-collapse: collapse;
+        .price-table-wrap {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--surface);
         }
+        .price-table { width: 100%; border-collapse: collapse; }
         .price-table thead th {
-            text-align: left; font-size: 0.72rem; font-weight: 600;
-            color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
-            padding: 10px 16px; border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.62rem; font-weight: 600;
+            color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px;
+            padding: 14px 20px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
         }
         .price-table tbody tr {
-            border-radius: 12px;
             transition: background 0.2s;
         }
-        .price-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+        .price-table tbody tr:hover {
+            background: rgba(255,255,255,0.025);
+        }
         .price-table tbody td {
-            padding: 16px 16px; vertical-align: middle;
+            padding: 18px 20px; vertical-align: middle;
         }
-        .price-table tbody tr + tr td { border-top: 1px solid var(--border); }
-
-        /* Best deal row */
+        .price-table tbody tr + tr td {
+            border-top: 1px solid var(--border);
+        }
         .price-table tbody tr.best-deal {
-            background: rgba(245,200,66,0.07);
+            background: rgba(212,168,67,0.04);
         }
-        .price-table tbody tr.best-deal td { border-top-color: rgba(245,200,66,0.15); }
+        .price-table tbody tr.best-deal td {
+            border-top-color: rgba(212,168,67,0.12);
+        }
 
-        .store-cell { display: flex; align-items: center; gap: 12px; }
+        .store-cell { display: flex; align-items: center; gap: 14px; }
         .store-icon {
-            width: 36px; height: 36px; border-radius: 10px;
+            width: 40px; height: 40px; border-radius: 10px;
+            border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem; flex-shrink: 0;
+            font-size: 1.15rem; flex-shrink: 0;
         }
-        .store-name { font-weight: 500; font-size: 0.95rem; }
-        .store-sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+        .store-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600; font-size: 0.92rem; color: var(--ice);
+        }
+        .store-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
 
         .price-badge {
-            display: inline-block;
-            font-family: 'Syne', sans-serif;
-            font-size: 1.2rem; font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem; font-weight: 900;
+            color: var(--ice); letter-spacing: -0.5px;
         }
         .price-badge.best { color: var(--gold); }
-        .price-badge.na { color: var(--muted); font-size: 0.9rem; font-family: 'Inter', sans-serif; font-weight: 400; }
+        .price-badge.na {
+            color: var(--muted); font-size: 0.82rem;
+            font-family: 'Inter', sans-serif; font-weight: 400;
+            letter-spacing: 0;
+        }
+
+        .badge-best-deal {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 0.6rem; font-weight: 700; color: var(--gold);
+            background: rgba(212,168,67,0.1); border: 1px solid rgba(212,168,67,0.25);
+            border-radius: 4px; padding: 3px 9px; margin-left: 10px;
+            vertical-align: middle; letter-spacing: 1px; text-transform: uppercase;
+        }
 
         .rating-cell { display: flex; align-items: center; gap: 6px; }
-        .stars { color: var(--gold); font-size: 0.85rem; }
-        .rating-num { font-size: 0.9rem; font-weight: 500; }
-        .rating-na { color: var(--muted); font-size: 0.85rem; }
+        .stars { color: var(--gold); font-size: 0.8rem; letter-spacing: 1px; }
+        .rating-num {
+            font-size: 0.85rem; font-weight: 600; color: var(--platinum);
+        }
+        .rating-na { color: var(--muted); font-size: 0.82rem; }
 
         .action-btn {
             display: inline-flex; align-items: center; gap: 6px;
-            font-size: 0.8rem; font-weight: 500; padding: 8px 16px;
-            border-radius: 8px; border: 1px solid var(--border);
-            color: var(--text); cursor: pointer; text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.72rem; font-weight: 600; padding: 9px 18px;
+            border-radius: 8px;
+            border: 1px solid rgba(212,168,67,0.25);
+            color: var(--gold); cursor: pointer; text-decoration: none;
+            background: rgba(212,168,67,0.07);
             transition: all 0.2s; white-space: nowrap;
-            background: rgba(255,255,255,0.05);
+            letter-spacing: 0.5px;
         }
         .action-btn:hover {
-            background: rgba(79,142,247,0.15);
-            border-color: rgba(79,142,247,0.4);
-            color: var(--accent);
-        }
-        .action-btn.primary {
-            background: rgba(79,142,247,0.15);
-            border-color: rgba(79,142,247,0.3);
-            color: var(--accent);
-        }
-        .badge-best-deal {
-            display: inline-flex; align-items: center; gap: 5px;
-            font-size: 0.68rem; font-weight: 600; color: var(--gold);
-            background: rgba(245,200,66,0.12); border: 1px solid rgba(245,200,66,0.25);
-            border-radius: 6px; padding: 3px 8px; margin-left: 10px;
-            vertical-align: middle;
+            background: rgba(212,168,67,0.14);
+            border-color: rgba(212,168,67,0.5);
+            box-shadow: 0 4px 14px rgba(212,168,67,0.15);
         }
 
-        /* ── EMPTY / ERROR ── */
+        /* ── EMPTY STATE ── */
         .empty-state {
-            text-align: center; padding: 60px 20px;
-            display: none; position: relative; z-index: 1;
+            text-align: center; padding: 80px 20px;
+            display: none; position: relative; z-index: 2;
         }
-        .empty-icon { font-size: 3rem; margin-bottom: 16px; }
-        .empty-state h3 { font-size: 1.1rem; margin-bottom: 8px; }
-        .empty-state p { color: var(--muted); font-size: 0.9rem; }
+        .empty-icon {
+            font-size: 2.8rem; margin-bottom: 20px; opacity: 0.7;
+        }
+        .empty-state h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem; color: var(--ice); margin-bottom: 10px;
+        }
+        .empty-state p { color: var(--muted); font-size: 0.88rem; }
 
         /* ── FOOTER ── */
         footer {
-            text-align: center; padding: 40px 20px;
-            color: var(--muted); font-size: 0.8rem;
+            position: relative; z-index: 2;
+            text-align: center; padding: 52px 20px;
             border-top: 1px solid var(--border);
-            position: relative; z-index: 1;
         }
-        footer a { color: var(--accent); text-decoration: none; }
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem; font-weight: 900;
+            color: var(--gold); margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .footer-logo-diamond {
+            width: 5px; height: 5px;
+            background: var(--gold); transform: rotate(45deg);
+            box-shadow: 0 0 8px var(--gold);
+        }
+        .footer-tagline {
+            font-size: 0.78rem; color: var(--muted);
+            margin-bottom: 18px; letter-spacing: 0.3px;
+        }
+        .footer-meta {
+            font-size: 0.65rem; color: var(--muted);
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .footer-founder {
+            display: inline-flex; align-items: center; gap: 8px;
+            margin-top: 18px;
+            font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 100px; padding: 6px 16px;
+        }
+        .footer-founder strong {
+            color: var(--gold); font-weight: 600;
+        }
+        .founder-divider { color: var(--border2); }
 
         /* ── RESPONSIVE ── */
-        @media (max-width: 600px) {
-            nav { padding: 14px 20px; }
-            .hero { padding: 60px 16px 40px; }
-            .product-card { flex-direction: column; align-items: flex-start; }
+        @media (max-width: 640px) {
+            nav { padding: 0 20px; }
+            .nav-tagline, .nav-divider { display: none; }
+            .hero { padding: 80px 16px 60px; }
+            .hero h1 { letter-spacing: -1px; }
+            .product-card { flex-direction: column; align-items: flex-start; padding: 24px 20px; }
+            .trust-strip { max-width: 100%; margin: 48px 16px 0; }
             .price-table thead th:nth-child(3),
             .price-table tbody td:nth-child(3) { display: none; }
+            .price-table tbody td { padding: 14px 14px; }
         }
     </style>
 </head>
 <body>
 
-<div class="bg-orbs">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-</div>
+<!-- AMBIENT -->
+<div class="bg-canvas"></div>
+<div class="noise-overlay"></div>
+<div class="grid-lines"></div>
 
 <!-- NAVBAR -->
 <nav>
-    <div class="logo">C<span>.</span>price</div>
-    <div class="nav-badge">INDIA EDITION</div>
+    <div class="nav-left">
+        <div class="logo">C<span class="logo-dot"></span><span class="logo-suffix">price</span></div>
+        <div class="nav-divider"></div>
+        <div class="nav-tagline">India's Price Intelligence</div>
+    </div>
+    <div class="nav-right">
+        <div class="nav-founder">By <strong>Aditya Rajput</strong></div>
+        <div class="nav-badge">India Edition</div>
+    </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-    <div class="hero-eyebrow">
-        <div class="pulse-dot"></div>
-        Live Price Comparison
+    <div class="hero-kicker">
+        <span class="kicker-line"></span>
+        Smart Shopping
+        <span class="kicker-line"></span>
     </div>
-    <h1>Find the <span class="gradient">Best Deal</span><br>Before You Buy</h1>
-    <p>Search any product and instantly compare prices across Amazon, Flipkart, and more — so you never overpay.</p>
+    <div style="margin-bottom:24px;">
+        <div class="live-badge">
+            <div class="live-dot"></div>
+            Live Prices
+        </div>
+    </div>
+    <h1>Never Overpay.<br><em>Ever Again.</em></h1>
+    <p class="hero-sub">Search any product and instantly compare prices across Amazon, Flipkart, and more — all in one place.</p>
 
-    <div class="search-wrap">
-        <div class="search-glow"></div>
-        <div class="search-inner">
-            <div class="search-icon">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <div class="search-container">
+        <div class="search-frame">
+            <div class="search-icon-wrap">
+                <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                 </svg>
             </div>
             <input
                 id="searchInput"
                 type="text"
-                placeholder="Search for iPhone 15, Nike shoes, Samsung TV…"
+                placeholder="Search iPhone 16, Samsung TV, Nike shoes…"
                 onkeydown="if(event.key==='Enter') comparePrice()"
             >
-            <button class="search-btn" onclick="comparePrice()">
+            <button class="search-cta" onclick="comparePrice()">
                 Compare
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
             </button>
         </div>
+
+        <div class="platform-row">
+            <span class="platform-label">Comparing on</span>
+            <div class="platform-items">
+                <div class="pitem"><div class="pitem-dot" style="background:#f90;"></div>Amazon.in</div>
+                <div class="pitem-sep"></div>
+                <div class="pitem"><div class="pitem-dot" style="background:#2874f0;"></div>Flipkart</div>
+                <div class="pitem-sep"></div>
+                <div class="pitem"><div class="pitem-dot" style="background:var(--muted);"></div>More Soon</div>
+            </div>
+        </div>
     </div>
 
-    <div class="platform-pills">
-        <div class="pill"><div class="pill-dot" style="background:#f90;"></div>Amazon.in</div>
-        <div class="pill"><div class="pill-dot" style="background:#2874f0;"></div>Flipkart</div>
-        <div class="pill"><div class="pill-dot" style="background:#a78bfa;"></div>More coming soon</div>
+    <div class="trust-strip">
+        <div class="trust-item">
+            <div class="trust-num">1M+</div>
+            <div class="trust-label">Products tracked</div>
+        </div>
+        <div class="trust-item">
+            <div class="trust-num">2</div>
+            <div class="trust-label">Live platforms</div>
+        </div>
+        <div class="trust-item">
+            <div class="trust-num">100%</div>
+            <div class="trust-label">Free forever</div>
+        </div>
     </div>
 </section>
 
 <!-- LOADING -->
 <div id="loading">
-    <div class="spinner"></div>
+    <div class="loader-ring"></div>
     <p>Scanning prices across platforms…</p>
 </div>
 
@@ -396,7 +637,6 @@
 <!-- RESULTS -->
 <div id="results">
 
-    <!-- Product summary card -->
     <div class="product-card" id="productCard">
         <div class="product-img-wrap">
             <img id="productImage" src="" alt="Product">
@@ -407,47 +647,50 @@
         </div>
     </div>
 
-    <!-- Price comparison table -->
-    <div class="section-heading">Price Comparison</div>
+    <div class="comparison-header">
+        <div class="comparison-title">Price Comparison</div>
+    </div>
 
-    <table class="price-table" id="priceTable">
-        <thead>
-            <tr>
-                <th>Store</th>
-                <th>Price</th>
-                <th>Rating</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="priceBody">
-            <!-- rows injected by JS -->
-        </tbody>
-    </table>
-
+    <div class="price-table-wrap">
+        <table class="price-table" id="priceTable">
+            <thead>
+                <tr>
+                    <th>Store</th>
+                    <th>Price</th>
+                    <th>Rating</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="priceBody"></tbody>
+        </table>
+    </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
-    Built with ❤️ — <strong>Cprice.in</strong> &nbsp;·&nbsp; Prices sourced live from retail APIs
+    <div class="footer-logo">
+        <div class="footer-logo-diamond"></div>
+        Cprice.in
+        <div class="footer-logo-diamond"></div>
+    </div>
+    <p class="footer-tagline">Prices sourced live from retail APIs · Always free, always accurate</p>
+    <p class="footer-meta">India's trusted price comparison engine</p>
+    <div class="footer-founder">
+        <span>Founded by</span>
+        <span class="founder-divider">·</span>
+        <strong>Aditya Rajput</strong>
+    </div>
 </footer>
 
 <script>
     const stores = [
         {
-            key: 'amazon',
-            name: 'Amazon',
-            sub: 'amazon.in',
-            icon: '📦',
-            iconBg: 'rgba(255,153,0,0.12)',
-            color: '#f90',
+            key: 'amazon', name: 'Amazon', sub: 'amazon.in',
+            icon: '📦', iconBg: 'rgba(255,153,0,0.1)', color: '#f90',
         },
         {
-            key: 'flipkart',
-            name: 'Flipkart',
-            sub: 'flipkart.com',
-            icon: '🛒',
-            iconBg: 'rgba(40,116,240,0.12)',
-            color: '#2874f0',
+            key: 'flipkart', name: 'Flipkart', sub: 'flipkart.com',
+            icon: '🛒', iconBg: 'rgba(40,116,240,0.1)', color: '#2874f0',
         }
     ];
 
@@ -467,7 +710,6 @@
         const query = document.getElementById('searchInput').value.trim();
         if (!query) { document.getElementById('searchInput').focus(); return; }
 
-        // UI reset
         document.getElementById('results').style.display = 'none';
         document.getElementById('emptyState').style.display = 'none';
         document.getElementById('loading').style.display = 'block';
@@ -475,7 +717,6 @@
         try {
             const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
             const data = await res.json();
-
             document.getElementById('loading').style.display = 'none';
 
             if (!data.products || data.products.length === 0) {
@@ -486,34 +727,31 @@
             const p = data.products[0];
             const price = Number(p.price) || 0;
 
-            // Product card
             document.getElementById('productTitle').textContent = p.title || 'Product';
             const img = document.getElementById('productImage');
             img.src = p.image || '';
-            img.onerror = () => { img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><text y="55" font-size="55">📦</text></svg>'; };
+            img.onerror = () => {
+                img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><text y="55" font-size="55">📦</text></svg>';
+            };
 
-            // Tags
             const tagsEl = document.getElementById('productTags');
             tagsEl.innerHTML = '';
-            if (price) tagsEl.innerHTML += `<span class="tag tag-best">Best: ${formatINR(price)}</span>`;
-            if (p.rating) tagsEl.innerHTML += `<span class="tag tag-saved">⭐ ${p.rating} rated</span>`;
+            if (price) tagsEl.innerHTML += `<span class="tag tag-best">Best ₹${Number(price).toLocaleString('en-IN')}</span>`;
+            if (p.rating) tagsEl.innerHTML += `<span class="tag tag-saved">⭐ ${p.rating} Rated</span>`;
 
-            // Build rows for each store
-            // Amazon → real data; others → N/A (until APIs integrated)
-            const rows = stores.map((store, i) => {
+            const rows = stores.map((store) => {
                 const isAmazon = store.key === 'amazon';
-                const storePrice = isAmazon ? price : null;
-                const storeRating = isAmazon ? (p.rating || null) : null;
-                const storeUrl = isAmazon ? (p.url || '#') : null;
-                const isBest = isAmazon && price > 0;
-
-                return { store, storePrice, storeRating, storeUrl, isBest };
+                return {
+                    store,
+                    storePrice: isAmazon ? price : null,
+                    storeRating: isAmazon ? (p.rating || null) : null,
+                    storeUrl: isAmazon ? (p.url || '#') : null,
+                    isBest: isAmazon && price > 0
+                };
             });
 
-            // Find lowest among non-null prices
             const prices = rows.map(r => r.storePrice).filter(Boolean);
             const minPrice = prices.length ? Math.min(...prices) : 0;
-
             const tbody = document.getElementById('priceBody');
             tbody.innerHTML = '';
 
@@ -530,7 +768,7 @@
                             </div>
                             <div>
                                 <div class="store-name">${store.name}
-                                    ${isLowest ? '<span class="badge-best-deal">🏆 Best Deal</span>' : ''}
+                                    ${isLowest ? '<span class="badge-best-deal">★ Best Deal</span>' : ''}
                                 </div>
                                 <div class="store-sub">${store.sub}</div>
                             </div>
@@ -553,13 +791,13 @@
                     </td>
                     <td>
                         ${storeUrl
-                            ? `<a href="${storeUrl}" target="_blank" class="action-btn primary">
+                            ? `<a href="${storeUrl}" target="_blank" class="action-btn">
                                     View
-                                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                         <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
                                     </svg>
                                </a>`
-                            : `<span style="color:var(--muted);font-size:0.82rem;">Coming soon</span>`
+                            : `<span style="color:var(--muted);font-size:0.75rem;letter-spacing:0.3px;">Coming soon</span>`
                         }
                     </td>
                 `;
@@ -575,6 +813,5 @@
         }
     }
 </script>
-
 </body>
 </html>
