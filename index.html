@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cprice</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            text-align:center;
+            margin-top:50px;
+            background:#f5f5f5;
+        }
+
+        h1{
+            color:#222;
+        }
+
+        input{
+            width:350px;
+            padding:12px;
+            font-size:16px;
+            border-radius:8px;
+            border:1px solid #ccc;
+        }
+
+        button{
+            padding:12px 20px;
+            font-size:16px;
+            cursor:pointer;
+            border:none;
+            border-radius:8px;
+            background:#007bff;
+            color:white;
+        }
+
+        button:hover{
+            background:#0056b3;
+        }
+
+        #productInfo{
+            display:none;
+            margin-top:30px;
+        }
+
+        #productImage{
+            width:250px;
+            margin-top:20px;
+            border-radius:12px;
+        }
+
+        table{
+            margin:auto;
+            margin-top:30px;
+            border-collapse:collapse;
+            width:700px;
+            background:white;
+        }
+
+        th{
+            background:#007bff;
+            color:white;
+        }
+
+        th,td{
+            border:1px solid #ddd;
+            padding:12px;
+        }
+
+        #amazonBtn{
+            margin-top:15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>🔍 Cprice - Compare Product Prices</h1>
+
+<input
+    id="product"
+    placeholder="Search Product"
+>
+
+<button onclick="comparePrice()">
+    Compare Price
+</button>
+
+<div id="productInfo">
+
+    <h2 id="productTitle"></h2>
+
+    <img id="productImage">
+
+    <br>
+
+    <a id="amazonLink" target="_blank">
+        <button id="amazonBtn">
+            View on Amazon
+        </button>
+    </a>
+
+</div>
+
+<table id="result" style="display:none;">
+
+    <tr>
+        <th>Store</th>
+        <th>Price</th>
+        <th>Rating</th>
+    </tr>
+
+    <tr>
+        <td>Amazon</td>
+        <td id="amazonPrice">-</td>
+        <td id="amazonRating">-</td>
+    </tr>
+
+</table>
+
+<script>
+
+async function comparePrice(){
+
+    let product =
+        document.getElementById("product").value;
+
+    if(product.trim() === ""){
+        alert("Enter product name");
+        return;
+    }
+
+    document.getElementById("amazonPrice").innerText =
+        "Loading...";
+
+    try{
+
+        let response =
+            await fetch(
+                `http://127.0.0.1:5000/search?q=${encodeURIComponent(product)}`
+            );
+
+        let data =
+            await response.json();
+
+        console.log(data);
+
+        if(
+            !data.products ||
+            data.products.length === 0
+        ){
+            alert("Product not found");
+            return;
+        }
+
+        let firstProduct =
+            data.products[0];
+
+        document.getElementById("productTitle").innerText =
+            firstProduct.title;
+
+        document.getElementById("productImage").src =
+            firstProduct.image;
+
+        document.getElementById("amazonPrice").innerText =
+            "₹" +
+            Number(firstProduct.price)
+            .toLocaleString("en-IN");
+
+        document.getElementById("amazonRating").innerText =
+            firstProduct.rating + " ⭐";
+
+        document.getElementById("amazonLink").href =
+            firstProduct.url;
+
+        document.getElementById("productInfo").style.display =
+            "block";
+
+        document.getElementById("result").style.display =
+            "table";
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        alert("Error fetching data");
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
