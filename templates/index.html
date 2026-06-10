@@ -19,6 +19,8 @@
     --card: #f9fafb;
   }
 
+  html { scroll-behavior: smooth; }
+
   body {
     font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
     background: var(--white);
@@ -36,7 +38,9 @@
     height: 64px;
     display: flex; align-items: center; justify-content: space-between;
     z-index: 1000;
+    transition: box-shadow 0.3s;
   }
+  nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
   .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
   .nav-logo-icon {
     width: 36px; height: 36px;
@@ -59,6 +63,25 @@
   }
   .nav-cta:hover { background: var(--green-dark); transform: translateY(-1px); }
 
+  /* hamburger */
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+  .nav-hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none; position: fixed; top: 64px; left: 0; right: 0;
+    background: #fff; border-bottom: 1px solid var(--border);
+    padding: 20px 5%; z-index: 999;
+    flex-direction: column; gap: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { text-decoration: none; color: var(--text); font-size: 16px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .mobile-menu a:last-child { border: none; }
+  .mobile-menu .m-cta { background: var(--green); color: #fff; text-align: center; padding: 14px; border-radius: 12px; border: none; }
+
   /* ====== HERO ====== */
   .hero {
     padding: 120px 5% 80px;
@@ -73,6 +96,7 @@
     width: 500px; height: 500px;
     background: radial-gradient(circle, #00C85315 0%, transparent 70%);
     border-radius: 50%;
+    pointer-events: none;
   }
 
   .hero-left { max-width: 560px; z-index: 1; }
@@ -85,6 +109,7 @@
     font-size: 13px; font-weight: 700;
     padding: 8px 16px; border-radius: 50px;
     margin-bottom: 24px;
+    animation: fadeInDown 0.6s ease both;
   }
   .hero-badge .dot {
     width: 8px; height: 8px;
@@ -95,10 +120,23 @@
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(0.8); }
   }
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 
   .hero h1 {
     font-size: 52px; font-weight: 900; line-height: 1.1;
     color: var(--dark); margin-bottom: 20px;
+    animation: fadeInUp 0.6s 0.1s ease both;
   }
   .hero h1 .highlight {
     color: var(--green);
@@ -114,10 +152,11 @@
   .hero-sub {
     font-size: 18px; color: var(--muted); line-height: 1.6;
     margin-bottom: 36px;
+    animation: fadeInUp 0.6s 0.2s ease both;
   }
   .hero-sub strong { color: var(--text); }
 
-  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; animation: fadeInUp 0.6s 0.3s ease both; }
   .btn-primary {
     background: var(--green);
     color: #fff; font-weight: 800; font-size: 16px;
@@ -138,14 +177,13 @@
   }
   .btn-secondary:hover { border-color: var(--green); color: var(--green); }
 
-  .hero-stats { display: flex; gap: 32px; }
-  .stat { }
+  .hero-stats { display: flex; gap: 32px; animation: fadeInUp 0.6s 0.4s ease both; }
   .stat .num { font-size: 26px; font-weight: 900; color: var(--dark); }
   .stat .num span { color: var(--green); }
   .stat .label { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
   /* Hero right - mock phone */
-  .hero-right { flex-shrink: 0; z-index: 1; }
+  .hero-right { flex-shrink: 0; z-index: 1; animation: fadeIn 0.8s 0.3s ease both; }
   .mock-phone {
     width: 280px;
     background: #fff;
@@ -154,7 +192,9 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 0 0 6px #f3f4f6;
     overflow: hidden;
     padding: 16px;
+    transition: transform 0.3s;
   }
+  .mock-phone:hover { transform: translateY(-6px) rotate(-1deg); }
   .mock-search {
     display: flex; align-items: center; gap: 8px;
     background: #f3f4f6; border-radius: 12px;
@@ -167,7 +207,9 @@
     padding: 10px 12px; margin-bottom: 8px;
     display: flex; align-items: center; gap: 10px;
     border: 1px solid #f0f0f0;
+    transition: transform 0.2s;
   }
+  .mock-item:hover { transform: translateX(2px); }
   .mock-item.best { border: 1.5px solid var(--green); background: #f0fdf4; }
   .mock-store { font-size: 18px; }
   .mock-info { flex: 1; }
@@ -196,7 +238,9 @@
     padding: 6px 6px 6px 20px;
     max-width: 620px; margin: 0 auto 48px;
     box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    transition: box-shadow 0.2s;
   }
+  .big-search:focus-within { box-shadow: 0 8px 40px rgba(0,200,83,0.3); }
   .big-search input {
     flex: 1; border: none; outline: none;
     font-size: 16px; color: var(--text);
@@ -207,9 +251,40 @@
     font-weight: 800; font-size: 15px;
     padding: 14px 28px; border-radius: 13px;
     border: none; cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
   }
-  .big-search button:hover { background: var(--green-dark); }
+  .big-search button:hover { background: var(--green-dark); transform: scale(1.02); }
+
+  /* Search result popup */
+  .search-result-popup {
+    display: none;
+    max-width: 620px; margin: -24px auto 24px;
+    background: #fff; border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+    animation: fadeInUp 0.3s ease;
+    text-align: left;
+  }
+  .search-result-popup.visible { display: block; }
+  .search-result-header {
+    background: var(--green); color: #fff;
+    padding: 12px 20px; font-size: 13px; font-weight: 700;
+  }
+  .search-result-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .search-result-row:last-child { border: none; }
+  .search-result-row:hover { background: #f9fafb; }
+  .search-result-row .store-name { font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .search-result-row .store-price { font-size: 15px; font-weight: 800; color: var(--dark); }
+  .search-result-row .store-price.lowest { color: var(--green); }
+  .search-result-row .best-tag { background: var(--green); color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px; }
+  .search-loading { padding: 20px; text-align: center; color: var(--muted); font-size: 14px; }
+  .loader { display: inline-block; width: 20px; height: 20px; border: 2px solid #e5e7eb; border-top-color: var(--green); border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .popular-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .tag {
@@ -217,8 +292,10 @@
     font-size: 13px; padding: 8px 16px;
     border-radius: 50px; border: 1px solid #2a2a45;
     cursor: pointer; transition: all 0.2s;
+    user-select: none;
   }
   .tag:hover { border-color: var(--green); color: var(--green); }
+  .tag:active { transform: scale(0.96); }
 
   /* ====== HOW IT WORKS ====== */
   .how-section { padding: 80px 5%; background: #fff; }
@@ -233,9 +310,10 @@
     border: 1px solid var(--border);
     border-radius: 24px; padding: 32px 28px;
     max-width: 260px; text-align: center;
-    position: relative; transition: all 0.2s;
+    position: relative; transition: all 0.25s;
+    cursor: default;
   }
-  .step:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,200,83,0.12); border-color: var(--green); }
+  .step:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,200,83,0.14); border-color: var(--green); }
   .step-num {
     position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
     background: var(--green); color: #fff;
@@ -253,16 +331,18 @@
   .feature-card {
     background: #fff; border: 1px solid var(--border);
     border-radius: 20px; padding: 28px;
-    transition: all 0.2s;
+    transition: all 0.25s; cursor: default;
   }
-  .feature-card:hover { border-color: var(--green); box-shadow: 0 8px 30px rgba(0,200,83,0.10); transform: translateY(-2px); }
+  .feature-card:hover { border-color: var(--green); box-shadow: 0 8px 32px rgba(0,200,83,0.12); transform: translateY(-3px); }
   .feature-icon {
     width: 52px; height: 52px;
     background: var(--green-light);
     border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
     font-size: 26px; margin-bottom: 16px;
+    transition: transform 0.2s;
   }
+  .feature-card:hover .feature-icon { transform: scale(1.1) rotate(-4deg); }
   .feature-card h3 { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
   .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 
@@ -275,10 +355,13 @@
     background: #f9fafb; border: 1px solid var(--border);
     border-radius: 50px; padding: 12px 22px;
     font-size: 15px; font-weight: 700; color: var(--text);
-    transition: all 0.2s;
+    transition: all 0.2s; cursor: default;
   }
-  .store-pill:hover { border-color: var(--green); background: var(--green-light); }
+  .store-pill:hover { border-color: var(--green); background: var(--green-light); transform: translateY(-2px); }
   .store-pill .s-icon { font-size: 22px; }
+
+  /* ====== TODAY'S DEAL ====== */
+  .deal-section { padding: 60px 5%; background: #fff; }
 
   /* ====== TESTIMONIALS ====== */
   .testimonials { padding: 80px 5%; background: #f9fafb; }
@@ -286,7 +369,9 @@
   .testi-card {
     background: #fff; border: 1px solid var(--border);
     border-radius: 20px; padding: 24px;
+    transition: all 0.2s;
   }
+  .testi-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
   .testi-stars { color: #F5C842; font-size: 16px; margin-bottom: 12px; }
   .testi-text { font-size: 15px; color: var(--text); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
   .testi-user { display: flex; align-items: center; gap: 10px; }
@@ -316,7 +401,7 @@
     text-decoration: none; font-weight: 700;
     transition: all 0.2s;
   }
-  .app-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,255,255,0.2); }
+  .app-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255,255,255,0.2); }
   .app-btn .app-icon { font-size: 28px; }
   .app-btn .app-text { text-align: left; }
   .app-btn .app-text small { display: block; font-size: 11px; color: var(--muted); font-weight: 400; }
@@ -336,26 +421,82 @@
   .footer-col ul a:hover { color: var(--green); }
   .footer-bottom { border-top: 1px solid var(--border); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
   .footer-bottom p { font-size: 13px; color: var(--muted); }
-  .footer-bottom .made { font-size: 13px; color: var(--muted); }
   .footer-bottom .made span { color: var(--green); }
+
+  /* ====== TOAST ====== */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--dark); color: #fff;
+    padding: 12px 24px; border-radius: 50px;
+    font-size: 14px; font-weight: 600;
+    z-index: 9999; pointer-events: none;
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s;
+    opacity: 0; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ====== SCROLL REVEAL ====== */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.5s, transform 0.5s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 900px) {
+    .hero { flex-direction: column; text-align: center; padding-top: 100px; min-height: auto; padding-bottom: 60px; }
+    .hero h1 { font-size: 38px; }
+    .hero-actions { justify-content: center; }
+    .hero-stats { justify-content: center; }
+    .hero-right { order: -1; }
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .nav-hamburger { display: flex; }
+  }
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 30px; }
+    .hero-sub { font-size: 15px; }
+    .section-header h2 { font-size: 28px; }
+    .cta-section h2 { font-size: 28px; }
+    .big-search { flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; }
+    .big-search input { width: 100%; }
+    .big-search button { width: 100%; border-radius: 10px; }
+    .mock-phone { width: 240px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
 </style>
 </head>
 <body>
 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <!-- NAVBAR -->
-<nav>
+<nav id="navbar">
   <a href="#" class="nav-logo">
     <div class="nav-logo-icon">C</div>
     <div class="nav-logo-text"><span>C</span>price</div>
   </a>
   <ul class="nav-links">
-    <li><a href="#">Kaise Kaam Karta Hai</a></li>
-    <li><a href="#">Features</a></li>
-    <li><a href="#">Stores</a></li>
-    <li><a href="#">Blog</a></li>
+    <li><a href="#how">Kaise Kaam Karta Hai</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#stores">Stores</a></li>
+    <li><a href="#blog">Blog</a></li>
   </ul>
-  <a href="#" class="nav-cta">🚀 App Download Karo</a>
+  <a href="#download" class="nav-cta">🚀 App Download Karo</a>
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </div>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#how" onclick="closeMenu()">Kaise Kaam Karta Hai</a>
+  <a href="#features" onclick="closeMenu()">Features</a>
+  <a href="#stores" onclick="closeMenu()">Stores</a>
+  <a href="#blog" onclick="closeMenu()">Blog</a>
+  <a href="#download" class="m-cta" onclick="closeMenu()">🚀 App Download Karo</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -371,12 +512,12 @@
       Paise bachao, smart shopping karo! 💰
     </p>
     <div class="hero-actions">
-      <a href="#" class="btn-primary">🔍 Abhi Search Karo</a>
-      <a href="#" class="btn-secondary">📱 App Download Karo</a>
+      <a href="#search" class="btn-primary">🔍 Abhi Search Karo</a>
+      <a href="#download" class="btn-secondary">📱 App Download Karo</a>
     </div>
     <div class="hero-stats">
       <div class="stat">
-        <div class="num">50<span>L+</span></div>
+        <div class="num" data-target="50">0<span>L+</span></div>
         <div class="label">Products tracked</div>
       </div>
       <div class="stat">
@@ -428,27 +569,33 @@
 </section>
 
 <!-- SEARCH DEMO -->
-<section class="search-section">
+<section class="search-section" id="search">
   <h2>Kuch bhi search karo 🔍</h2>
   <p>Mobile se lekar Atta tak — Cprice har cheez compare karta hai</p>
   <div class="big-search">
     <span style="font-size:20px;">🔍</span>
-    <input type="text" placeholder="e.g. Samsung S24, Basmati Rice, Nike Shoes..."/>
-    <button>Compare Karo →</button>
+    <input type="text" id="searchInput" placeholder="e.g. Samsung S24, Basmati Rice, Nike Shoes..." autocomplete="off"/>
+    <button id="searchBtn" onclick="doSearch()">Compare Karo →</button>
   </div>
+
+  <!-- Search Result Popup -->
+  <div class="search-result-popup" id="searchResult">
+    <div id="searchResultInner"></div>
+  </div>
+
   <div class="popular-tags">
-    <div class="tag">📱 iPhone 15</div>
-    <div class="tag">💻 MacBook Air</div>
-    <div class="tag">👟 Nike Shoes</div>
-    <div class="tag">📺 Samsung TV</div>
-    <div class="tag">🍚 Basmati Rice</div>
-    <div class="tag">🎧 Sony Headphones</div>
-    <div class="tag">👕 Levi's Jeans</div>
+    <div class="tag" onclick="fillSearch('iPhone 15')">📱 iPhone 15</div>
+    <div class="tag" onclick="fillSearch('MacBook Air')">💻 MacBook Air</div>
+    <div class="tag" onclick="fillSearch('Nike Shoes')">👟 Nike Shoes</div>
+    <div class="tag" onclick="fillSearch('Samsung TV')">📺 Samsung TV</div>
+    <div class="tag" onclick="fillSearch('Basmati Rice')">🍚 Basmati Rice</div>
+    <div class="tag" onclick="fillSearch('Sony Headphones')">🎧 Sony Headphones</div>
+    <div class="tag" onclick="fillSearch('Levi\'s Jeans')">👕 Levi's Jeans</div>
   </div>
 </section>
 
-<!-- TODAY'S DEAL - REAL PRODUCT -->
-<section style="padding: 60px 5%; background: #fff;">
+<!-- TODAY'S DEAL -->
+<section class="deal-section reveal">
   <div class="section-header">
     <div class="eyebrow">🔥 Aaj Ka Deal</div>
     <h2>Real Products — Real Savings! 💰</h2>
@@ -456,38 +603,26 @@
   </div>
 
   <div style="max-width: 340px; margin: 0 auto; background: #f9fafb; border: 2px solid #00C853; border-radius: 24px; padding: 24px; box-shadow: 0 8px 30px rgba(0,200,83,0.12);">
-
-    <!-- Best deal badge -->
     <div style="display:inline-block; background:#00C853; color:#fff; font-size:11px; font-weight:800; padding:4px 12px; border-radius:20px; margin-bottom:16px; letter-spacing:1px;">
       ✅ CPRICE VERIFIED DEAL
     </div>
-
-    <!-- Product image placeholder -->
     <div style="background:#e8f5e9; border-radius:16px; height:160px; display:flex; align-items:center; justify-content:center; font-size:72px; margin-bottom:16px;">
       🎒
     </div>
-
-    <!-- Product name -->
     <div style="font-size:15px; font-weight:800; color:#1a1a2e; margin-bottom:6px; line-height:1.4;">
       HOT SHOT PHANTOM-X Backpack
     </div>
     <div style="font-size:12px; color:#6b7280; margin-bottom:14px;">
       Detachable Key Ring · Trolley Sleeve · Laptop Compartment
     </div>
-
-    <!-- Price -->
     <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
       <span style="font-size:28px; font-weight:900; color:#00C853;">₹998</span>
       <span style="font-size:14px; color:#9ca3af; text-decoration:line-through;">₹1,499</span>
       <span style="background:#00C85220; color:#00C853; font-size:11px; font-weight:800; padding:3px 8px; border-radius:8px;">33% OFF</span>
     </div>
-
-    <!-- Commission info (for you) -->
     <div style="background:#fff3e0; border-radius:10px; padding:8px 12px; margin-bottom:16px; font-size:12px; color:#e65100;">
       💰 Aapka Commission: <strong>₹99.8</strong> (10%) — har sale pe!
     </div>
-
-    <!-- Store comparison -->
     <div style="margin-bottom:16px;">
       <div style="font-size:11px; font-weight:700; color:#9ca3af; letter-spacing:1px; margin-bottom:8px;">STORE COMPARISON</div>
       <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #e5e7eb;">
@@ -503,14 +638,12 @@
         <span style="font-size:14px; font-weight:600; color:#6b7280;">₹1,099</span>
       </div>
     </div>
-
-    <!-- Buy button with affiliate link -->
-    <a href="https://amzn.to/4xizRAm"
-       target="_blank"
-       style="display:block; background:#00C853; color:#fff; text-align:center; font-size:16px; font-weight:800; padding:16px; border-radius:14px; text-decoration:none; box-shadow:0 4px 20px rgba(0,200,83,0.35); transition:all 0.2s;">
+    <a href="https://amzn.to/4xizRAm" target="_blank" rel="noopener"
+       style="display:block; background:#00C853; color:#fff; text-align:center; font-size:16px; font-weight:800; padding:16px; border-radius:14px; text-decoration:none; box-shadow:0 4px 20px rgba(0,200,83,0.35); transition:all 0.2s;"
+       onmouseover="this.style.background='#009624'; this.style.transform='translateY(-2px)'"
+       onmouseout="this.style.background='#00C853'; this.style.transform='translateY(0)'">
       🛒 Amazon pe Kharido — ₹998
     </a>
-
     <div style="text-align:center; margin-top:10px; font-size:11px; color:#9ca3af;">
       🔒 Secure checkout · Amazon pe direct jayenge
     </div>
@@ -518,26 +651,26 @@
 </section>
 
 <!-- HOW IT WORKS -->
-<section class="how-section">
-  <div class="section-header">
+<section class="how-section" id="how">
+  <div class="section-header reveal">
     <div class="eyebrow">Kaise Kaam Karta Hai</div>
     <h2>3 Steps mein Sasta Dhundo 🎯</h2>
     <p>Itna aasaan hai ki aap sochoge — yeh pehle kyun nahi tha!</p>
   </div>
   <div class="steps">
-    <div class="step">
+    <div class="step reveal">
       <div class="step-num">1</div>
       <div class="step-icon">🔍</div>
       <h3>Product Search Karo</h3>
       <p>Koi bhi product ka naam type karo ya barcode scan karo — result aayega turant!</p>
     </div>
-    <div class="step">
+    <div class="step reveal" style="transition-delay:0.1s">
       <div class="step-num">2</div>
       <div class="step-icon">⚖️</div>
       <h3>Prices Compare Karo</h3>
       <p>20+ stores ka price ek jagah dekho — Amazon, Flipkart, Meesho, Croma sab ek saath!</p>
     </div>
-    <div class="step">
+    <div class="step reveal" style="transition-delay:0.2s">
       <div class="step-num">3</div>
       <div class="step-icon">💰</div>
       <h3>Sasta Kharido!</h3>
@@ -547,39 +680,39 @@
 </section>
 
 <!-- FEATURES -->
-<section class="features-section">
-  <div class="section-header">
+<section class="features-section" id="features">
+  <div class="section-header reveal">
     <div class="eyebrow">Features</div>
     <h2>Jo koi aur nahi deta ✨</h2>
     <p>Cprice sirf price nahi dikhata — aapka pura shopping experience smart banata hai</p>
   </div>
   <div class="features-grid">
-    <div class="feature-card">
+    <div class="feature-card reveal">
       <div class="feature-icon">📉</div>
       <h3>Price History Graph</h3>
       <p>6 mahine ka price track dekho. Kab sasta tha, kab mehenga — sab pata chalega buying ka sahi time!</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal" style="transition-delay:0.05s">
       <div class="feature-icon">🔔</div>
       <h3>Price Drop Alert</h3>
       <p>Apna target price set karo — jab price girega, Cprice aapko WhatsApp ya email pe notify karega!</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal" style="transition-delay:0.1s">
       <div class="feature-icon">🏷️</div>
       <h3>Coupon & Cashback</h3>
       <p>Hidden coupons aur cashback offers jo aur koi nahi batata — Cprice automatically apply karta hai!</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal" style="transition-delay:0.15s">
       <div class="feature-icon">🤖</div>
       <h3>AI Smart Suggestion</h3>
       <p>"Yeh product agle week mein sasta hoga" — Cprice ka AI aapko pehle se bata deta hai!</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal" style="transition-delay:0.2s">
       <div class="feature-icon">❤️</div>
       <h3>Wishlist & Tracking</h3>
       <p>Apne favorite products save karo. Jab bhi price drop ho, aapko instantly pata chalega!</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal" style="transition-delay:0.25s">
       <div class="feature-icon">📊</div>
       <h3>Best Time to Buy</h3>
       <p>Sale kab aayegi? Festival offers kab tak chalenge? Cprice sab predict karta hai!</p>
@@ -588,7 +721,7 @@
 </section>
 
 <!-- STORES -->
-<section class="stores-section">
+<section class="stores-section" id="stores">
   <h2>Hum in stores se compare karte hain 🏪</h2>
   <div class="stores-row">
     <div class="store-pill"><span class="s-icon">📦</span> Amazon</div>
@@ -606,12 +739,12 @@
 
 <!-- TESTIMONIALS -->
 <section class="testimonials">
-  <div class="section-header">
+  <div class="section-header reveal">
     <div class="eyebrow">Log Kya Kehte Hain</div>
     <h2>Lakho Indians ka bharosa 🙌</h2>
   </div>
   <div class="testi-grid">
-    <div class="testi-card">
+    <div class="testi-card reveal">
       <div class="testi-stars">⭐⭐⭐⭐⭐</div>
       <p class="testi-text">"iPhone lena tha, soch raha tha Amazon se lunga. Cprice ne bataya Flipkart pe ₹4,500 sasta hai. Yaar, game changer hai yeh app!"</p>
       <div class="testi-user">
@@ -622,7 +755,7 @@
         </div>
       </div>
     </div>
-    <div class="testi-card">
+    <div class="testi-card reveal" style="transition-delay:0.1s">
       <div class="testi-stars">⭐⭐⭐⭐⭐</div>
       <p class="testi-text">"Ghar ka saman, bachon ke kapde, sab Cprice se compare karke kharidti hoon. Is mahine ₹3,200 bacha liye! Bahut acha app hai."</p>
       <div class="testi-user">
@@ -633,7 +766,7 @@
         </div>
       </div>
     </div>
-    <div class="testi-card">
+    <div class="testi-card reveal" style="transition-delay:0.2s">
       <div class="testi-stars">⭐⭐⭐⭐⭐</div>
       <p class="testi-text">"Price drop alert feature mast hai! TV ka price set kiya tha, 2 hafte baad notification aaya — ₹8,000 sasta ho gaya tha. Turant kharida!"</p>
       <div class="testi-user">
@@ -648,25 +781,25 @@
 </section>
 
 <!-- CTA -->
-<section class="cta-section">
+<section class="cta-section" id="download">
   <h2>Ab aur zyada mat bharo! 💸</h2>
   <p>Cprice download karo — pehli shopping mein hi paise bachana shuru karo</p>
   <div class="cta-btns">
-    <a href="#" class="app-btn">
+    <a href="#" class="app-btn" onclick="showToast('🤖 Play Store pe jald aayega!')">
       <div class="app-icon">🤖</div>
       <div class="app-text">
         <small>Download on</small>
         <strong>Google Play</strong>
       </div>
     </a>
-    <a href="#" class="app-btn">
+    <a href="#" class="app-btn" onclick="showToast('🍎 App Store pe jald aayega!')">
       <div class="app-icon">🍎</div>
       <div class="app-text">
         <small>Download on</small>
         <strong>App Store</strong>
       </div>
     </a>
-    <a href="#" class="btn-primary" style="padding: 14px 28px;">
+    <a href="#search" class="btn-primary" style="padding: 14px 28px;">
       🌐 Website Use Karo
     </a>
   </div>
@@ -686,7 +819,7 @@
       <h4>Company</h4>
       <ul>
         <li><a href="#">Hamare Baare Mein</a></li>
-        <li><a href="#">Blog</a></li>
+        <li><a href="#" id="blog">Blog</a></li>
         <li><a href="#">Careers</a></li>
         <li><a href="#">Press</a></li>
       </ul>
@@ -703,10 +836,10 @@
     <div class="footer-col">
       <h4>Popular Searches</h4>
       <ul>
-        <li><a href="#">iPhone Price Compare</a></li>
-        <li><a href="#">Samsung Galaxy Deals</a></li>
-        <li><a href="#">Laptop Sasta Kahan</a></li>
-        <li><a href="#">TV Best Price</a></li>
+        <li><a href="#search" onclick="fillSearch('iPhone 15')">iPhone Price Compare</a></li>
+        <li><a href="#search" onclick="fillSearch('Samsung Galaxy S24')">Samsung Galaxy Deals</a></li>
+        <li><a href="#search" onclick="fillSearch('Laptop')">Laptop Sasta Kahan</a></li>
+        <li><a href="#search" onclick="fillSearch('Samsung TV')">TV Best Price</a></li>
       </ul>
     </div>
   </div>
@@ -716,5 +849,140 @@
   </div>
 </footer>
 
+<script>
+  /* ===== NAVBAR SCROLL ===== */
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  /* ===== MOBILE MENU ===== */
+  function toggleMenu() {
+    const m = document.getElementById('mobileMenu');
+    const h = document.getElementById('hamburger');
+    m.classList.toggle('open');
+    h.classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+  }
+
+  /* ===== TOAST ===== */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  /* ===== SEARCH ===== */
+  const mockData = {
+    'iphone 15': [
+      { store: '🛒 Flipkart', price: '₹67,999', delivery: 'Free delivery · 2 days', best: true },
+      { store: '📦 Amazon', price: '₹69,499', delivery: 'Prime · Same day', best: false },
+      { store: '🏪 Croma', price: '₹72,990', delivery: 'Store pickup', best: false },
+    ],
+    'macbook air': [
+      { store: '📦 Amazon', price: '₹92,900', delivery: 'Prime · 1 day', best: true },
+      { store: '🛒 Flipkart', price: '₹94,990', delivery: 'Free delivery', best: false },
+      { store: '🏠 Reliance Digital', price: '₹97,990', delivery: 'Store pickup', best: false },
+    ],
+    'nike shoes': [
+      { store: '👗 Myntra', price: '₹3,499', delivery: 'Free · 3 days', best: true },
+      { store: '📦 Amazon', price: '₹3,799', delivery: 'Prime · 1 day', best: false },
+      { store: '🛒 Flipkart', price: '₹3,999', delivery: 'Free delivery', best: false },
+    ],
+    'samsung tv': [
+      { store: '🛒 Flipkart', price: '₹32,990', delivery: 'Free delivery', best: true },
+      { store: '📦 Amazon', price: '₹34,499', delivery: 'Prime · 2 days', best: false },
+      { store: '🏠 Reliance Digital', price: '₹35,990', delivery: 'Store pickup', best: false },
+    ],
+    'basmati rice': [
+      { store: '📦 Amazon', price: '₹189', delivery: 'Prime · Same day', best: true },
+      { store: '🥦 BigBasket', price: '₹199', delivery: 'Express 3hr', best: false },
+      { store: '⚡ Blinkit', price: '₹215', delivery: '10 min delivery', best: false },
+    ],
+    'sony headphones': [
+      { store: '📦 Amazon', price: '₹2,999', delivery: 'Prime · 1 day', best: true },
+      { store: '🛒 Flipkart', price: '₹3,199', delivery: 'Free delivery', best: false },
+      { store: '🏪 Croma', price: '₹3,499', delivery: 'Store pickup', best: false },
+    ],
+    'laptop': [
+      { store: '🛒 Flipkart', price: '₹42,990', delivery: 'Free delivery', best: true },
+      { store: '📦 Amazon', price: '₹44,990', delivery: 'Prime · 2 days', best: false },
+      { store: '🏠 Reliance Digital', price: '₹47,990', delivery: 'Store pickup', best: false },
+    ],
+    'samsung galaxy s24': [
+      { store: '📦 Amazon', price: '₹54,999', delivery: 'Prime · Same day', best: true },
+      { store: '🛒 Flipkart', price: '₹56,499', delivery: 'Free delivery', best: false },
+      { store: '🏠 Reliance Digital', price: '₹58,990', delivery: 'Store pickup', best: false },
+    ],
+  };
+
+  function getResults(query) {
+    const q = query.toLowerCase().trim();
+    if (mockData[q]) return mockData[q];
+    // fuzzy match
+    for (const key of Object.keys(mockData)) {
+      if (key.includes(q) || q.includes(key.split(' ')[0])) return mockData[key];
+    }
+    // generic fallback
+    const base = Math.floor(Math.random() * 40 + 10) * 1000;
+    return [
+      { store: '📦 Amazon', price: '₹' + base.toLocaleString('en-IN'), delivery: 'Prime · 1 day', best: true },
+      { store: '🛒 Flipkart', price: '₹' + (base + Math.floor(Math.random()*2+1)*500).toLocaleString('en-IN'), delivery: 'Free delivery', best: false },
+      { store: '📲 Meesho', price: '₹' + (base + Math.floor(Math.random()*4+2)*500).toLocaleString('en-IN'), delivery: 'Free delivery · 4 days', best: false },
+    ];
+  }
+
+  function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) { showToast('❗ Pehle kuch type karo!'); return; }
+    const popup = document.getElementById('searchResult');
+    const inner = document.getElementById('searchResultInner');
+    inner.innerHTML = '<div class="search-loading"><span class="loader"></span> Compare kar raha hoon...</div>';
+    popup.classList.add('visible');
+    setTimeout(() => {
+      const results = getResults(q);
+      const savings = parseInt(results[results.length-1].price.replace(/[₹,]/g,'')) - parseInt(results[0].price.replace(/[₹,]/g,''));
+      inner.innerHTML = `
+        <div class="search-result-header">✅ "${q}" — ${results.length} stores mein compare kiya · Bachao: ₹${savings.toLocaleString('en-IN')}</div>
+        ${results.map((r, i) => `
+          <div class="search-result-row">
+            <span class="store-name">${r.store} ${r.best ? '<span class="best-tag">SASTA</span>' : ''}</span>
+            <div style="text-align:right">
+              <span class="store-price ${r.best ? 'lowest' : ''}">${r.price}</span>
+              <div style="font-size:11px;color:#9ca3af;">${r.delivery}</div>
+            </div>
+          </div>
+        `).join('')}
+        <div style="padding:12px 20px;text-align:center;">
+          <span style="font-size:12px;color:#6b7280;">👆 Click karke seedha store pe jao</span>
+        </div>
+      `;
+    }, 900);
+  }
+
+  function fillSearch(text) {
+    const input = document.getElementById('searchInput');
+    input.value = text;
+    input.focus();
+    document.getElementById('searchResult').classList.remove('visible');
+    document.getElementById('search').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(doSearch, 300);
+  }
+
+  document.getElementById('searchInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  /* ===== SCROLL REVEAL ===== */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) { el.target.classList.add('visible'); observer.unobserve(el.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
