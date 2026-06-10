@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import requests
 import os
@@ -10,7 +10,7 @@ API_KEY = "asa_live_0GQLuJ0G3ZlXU8bNgxmouzZulaK2fDHm"
 
 @app.route("/")
 def home():
-    return "Cprice API Running"
+    return render_template("index.html")
 
 @app.route("/search")
 def search():
@@ -30,9 +30,14 @@ def search():
         "domain": "in"
     }
 
-    response = requests.get(url, params=params)
+    try:
+        response = requests.get(url, params=params, timeout=30)
+        return jsonify(response.json())
 
-    return jsonify(response.json())
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 if __name__ == "__main__":
     app.run(
