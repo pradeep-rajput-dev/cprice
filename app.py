@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -9,10 +10,7 @@ API_KEY = "asa_live_0GQLuJ0G3ZlXU8bNgxmouzZulaK2fDHm"
 
 @app.route("/")
 def home():
-    return {
-        "status": "online",
-        "message": "Cprice API Running"
-    }
+    return "Cprice API Running"
 
 @app.route("/search")
 def search():
@@ -21,7 +19,7 @@ def search():
 
     if not product:
         return jsonify({
-            "error": "Product name required"
+            "error": "Product query missing"
         }), 400
 
     url = "https://api.amazonscraperapi.com/api/v1/amazon/search"
@@ -37,4 +35,7 @@ def search():
     return jsonify(response.json())
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000))
+    )
