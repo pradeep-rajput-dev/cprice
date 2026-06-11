@@ -6,469 +6,246 @@
 <title>Cprice — Sabse Sasta, Sabse Smart</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   :root {
-    --green: #00C853;
-    --green-dark: #009624;
-    --green-light: #E8F5E9;
-    --dark: #0D0D1A;
-    --text: #1a1a2e;
-    --muted: #6b7280;
-    --border: #e5e7eb;
-    --white: #ffffff;
-    --card: #f9fafb;
+    --green: #00C853; --green-dark: #009624; --green-light: #E8F5E9;
+    --dark: #0D0D1A; --text: #1a1a2e; --muted: #6b7280;
+    --border: #e5e7eb; --white: #ffffff; --card: #f9fafb;
   }
-
   html { scroll-behavior: smooth; }
+  body { font-family: -apple-system,'Segoe UI','Helvetica Neue',sans-serif; background:#fff; color:var(--text); overflow-x:hidden; }
 
-  body {
-    font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
-    background: var(--white);
-    color: var(--text);
-    overflow-x: hidden;
-  }
-
-  /* ====== NAVBAR ====== */
+  /* NAVBAR */
   nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 5%;
-    height: 64px;
-    display: flex; align-items: center; justify-content: space-between;
-    z-index: 1000;
-    transition: box-shadow 0.3s;
+    position:fixed; top:0; left:0; right:0;
+    background:rgba(255,255,255,0.95); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border);
+    padding:0 5%; height:64px;
+    display:flex; align-items:center; justify-content:space-between;
+    z-index:1000; transition:box-shadow 0.3s;
   }
-  nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-  .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-  .nav-logo-icon {
-    width: 36px; height: 36px;
-    background: var(--green);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; font-weight: 900; color: #fff;
-  }
-  .nav-logo-text { font-size: 22px; font-weight: 800; color: var(--dark); }
-  .nav-logo-text span { color: var(--green); }
-  .nav-links { display: flex; gap: 28px; list-style: none; }
-  .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--green); }
-  .nav-cta {
-    background: var(--green);
-    color: #fff; font-weight: 700; font-size: 14px;
-    padding: 10px 22px; border-radius: 12px;
-    text-decoration: none; border: none; cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
-  .nav-cta:hover { background: var(--green-dark); transform: translateY(-1px); }
+  nav.scrolled { box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+  .nav-logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+  .nav-logo-icon { width:36px; height:36px; background:var(--green); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:900; color:#fff; }
+  .nav-logo-text { font-size:22px; font-weight:800; color:var(--dark); }
+  .nav-logo-text span { color:var(--green); }
+  .nav-links { display:flex; gap:28px; list-style:none; }
+  .nav-links a { text-decoration:none; color:var(--muted); font-size:14px; font-weight:500; transition:color 0.2s; }
+  .nav-links a:hover { color:var(--green); }
+  .nav-cta { background:var(--green); color:#fff; font-weight:700; font-size:14px; padding:10px 22px; border-radius:12px; text-decoration:none; transition:background 0.2s,transform 0.1s; }
+  .nav-cta:hover { background:var(--green-dark); transform:translateY(-1px); }
+  .nav-hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
+  .nav-hamburger span { display:block; width:24px; height:2px; background:var(--text); border-radius:2px; transition:all 0.3s; }
+  .nav-hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity:0; }
+  .nav-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+  .mobile-menu { display:none; position:fixed; top:64px; left:0; right:0; background:#fff; border-bottom:1px solid var(--border); padding:20px 5%; z-index:999; flex-direction:column; gap:16px; box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+  .mobile-menu.open { display:flex; }
+  .mobile-menu a { text-decoration:none; color:var(--text); font-size:16px; font-weight:600; padding:8px 0; border-bottom:1px solid var(--border); }
+  .mobile-menu a:last-child { border:none; }
+  .mobile-menu .m-cta { background:var(--green); color:#fff; text-align:center; padding:14px; border-radius:12px; border:none; }
 
-  /* hamburger */
-  .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
-  .nav-hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
-  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-  .mobile-menu {
-    display: none; position: fixed; top: 64px; left: 0; right: 0;
-    background: #fff; border-bottom: 1px solid var(--border);
-    padding: 20px 5%; z-index: 999;
-    flex-direction: column; gap: 16px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-  }
-  .mobile-menu.open { display: flex; }
-  .mobile-menu a { text-decoration: none; color: var(--text); font-size: 16px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid var(--border); }
-  .mobile-menu a:last-child { border: none; }
-  .mobile-menu .m-cta { background: var(--green); color: #fff; text-align: center; padding: 14px; border-radius: 12px; border: none; }
-
-  /* ====== HERO ====== */
+  /* ===== HERO — SEARCH FIRST ===== */
   .hero {
-    padding: 120px 5% 80px;
-    background: linear-gradient(160deg, #f0fdf4 0%, #ffffff 50%, #f0fdf4 100%);
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 40px; min-height: 100vh;
-    position: relative; overflow: hidden;
+    padding:80px 5% 60px;
+    background:linear-gradient(160deg,#f0fdf4 0%,#ffffff 50%,#f0fdf4 100%);
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; position:relative; overflow:hidden;
   }
-  .hero::before {
-    content: '';
-    position: absolute; top: -100px; right: -100px;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, #00C85315 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-  }
+  .hero::before { content:''; position:absolute; top:-80px; right:-80px; width:500px; height:500px; background:radial-gradient(circle,#00C85318 0%,transparent 70%); border-radius:50%; pointer-events:none; }
+  .hero::after { content:''; position:absolute; bottom:-80px; left:-80px; width:400px; height:400px; background:radial-gradient(circle,#00C85310 0%,transparent 70%); border-radius:50%; pointer-events:none; }
 
-  .hero-left { max-width: 560px; z-index: 1; }
+  .hero-badge { display:inline-flex; align-items:center; gap:8px; background:var(--green-light); border:1px solid #00C85340; color:var(--green-dark); font-size:13px; font-weight:700; padding:8px 16px; border-radius:50px; margin-bottom:20px; animation:fadeInDown 0.5s ease both; }
+  .hero-badge .dot { width:8px; height:8px; background:var(--green); border-radius:50%; animation:pulse 2s infinite; }
+  .hero h1 { font-size:58px; font-weight:900; line-height:1.08; color:var(--dark); margin-bottom:16px; animation:fadeInUp 0.5s 0.1s ease both; }
+  .hero h1 .highlight { color:var(--green); position:relative; }
+  .hero h1 .highlight::after { content:''; position:absolute; bottom:2px; left:0; right:0; height:4px; background:var(--green); opacity:0.25; border-radius:2px; }
+  .hero-sub { font-size:17px; color:var(--muted); line-height:1.6; margin-bottom:40px; max-width:560px; animation:fadeInUp 0.5s 0.15s ease both; }
+  .hero-sub strong { color:var(--text); }
 
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--green-light);
-    border: 1px solid #00C85340;
-    color: var(--green-dark);
-    font-size: 13px; font-weight: 700;
-    padding: 8px 16px; border-radius: 50px;
-    margin-bottom: 24px;
-    animation: fadeInDown 0.6s ease both;
+  /* BIG HERO SEARCH — THE STAR */
+  .hero-search-wrap { width:100%; max-width:680px; margin-bottom:20px; z-index:2; animation:fadeInUp 0.5s 0.2s ease both; }
+  .hero-search-box {
+    display:flex; align-items:center;
+    background:#fff; border-radius:20px;
+    padding:8px 8px 8px 22px;
+    box-shadow:0 8px 48px rgba(0,200,83,0.22), 0 2px 12px rgba(0,0,0,0.08);
+    border:2px solid transparent;
+    transition:border-color 0.2s, box-shadow 0.2s;
   }
-  .hero-badge .dot {
-    width: 8px; height: 8px;
-    background: var(--green); border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
-  @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+  .hero-search-box:focus-within { border-color:var(--green); box-shadow:0 8px 56px rgba(0,200,83,0.32), 0 2px 16px rgba(0,0,0,0.1); }
+  .hero-search-box input { flex:1; border:none; outline:none; font-size:17px; color:var(--text); background:none; padding:10px 0; }
+  .hero-search-box button { background:var(--green); color:#fff; font-weight:800; font-size:15px; padding:14px 30px; border-radius:14px; border:none; cursor:pointer; transition:background 0.2s,transform 0.1s; white-space:nowrap; }
+  .hero-search-box button:hover { background:var(--green-dark); transform:scale(1.03); }
 
-  .hero h1 {
-    font-size: 52px; font-weight: 900; line-height: 1.1;
-    color: var(--dark); margin-bottom: 20px;
-    animation: fadeInUp 0.6s 0.1s ease both;
+  /* Hero result popup */
+  .hero-result-popup {
+    display:none; width:100%; max-width:680px;
+    background:#fff; border-radius:20px; overflow:hidden;
+    box-shadow:0 16px 56px rgba(0,0,0,0.14); margin-top:8px; z-index:2;
+    animation:fadeInUp 0.3s ease; text-align:left;
   }
-  .hero h1 .highlight {
-    color: var(--green);
-    position: relative;
-  }
-  .hero h1 .highlight::after {
-    content: '';
-    position: absolute; bottom: 2px; left: 0; right: 0;
-    height: 3px; background: var(--green); opacity: 0.3;
-    border-radius: 2px;
-  }
+  .hero-result-popup.visible { display:block; }
+  .result-header { background:var(--green); color:#fff; padding:14px 22px; font-size:13px; font-weight:700; display:flex; justify-content:space-between; align-items:center; }
+  .result-close { cursor:pointer; font-size:18px; line-height:1; opacity:0.8; }
+  .result-close:hover { opacity:1; }
+  .result-product-info { display:flex; align-items:center; gap:16px; padding:18px 22px; border-bottom:1px solid var(--border); background:#fafafa; }
+  .result-product-img { width:72px; height:72px; border-radius:12px; object-fit:cover; background:#e8f5e9; display:flex; align-items:center; justify-content:center; font-size:40px; flex-shrink:0; }
+  .result-product-name { font-size:15px; font-weight:800; color:var(--dark); margin-bottom:4px; }
+  .result-product-sub { font-size:12px; color:var(--muted); }
+  .result-row { display:flex; align-items:center; justify-content:space-between; padding:13px 22px; border-bottom:1px solid #f3f4f6; transition:background 0.15s; text-decoration:none; color:inherit; }
+  .result-row:hover { background:#f0fdf4; }
+  .result-row:last-of-type { border:none; }
+  .result-store { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:var(--text); }
+  .result-store .best-badge { background:var(--green); color:#fff; font-size:10px; font-weight:800; padding:3px 9px; border-radius:6px; }
+  .result-right { text-align:right; }
+  .result-price { font-size:16px; font-weight:800; color:var(--dark); }
+  .result-price.best { color:var(--green); }
+  .result-delivery { font-size:11px; color:var(--muted); }
+  .result-visit { font-size:11px; color:var(--green); font-weight:700; margin-top:2px; }
+  .search-loading { padding:24px; text-align:center; color:var(--muted); font-size:14px; }
+  .loader { display:inline-block; width:20px; height:20px; border:2px solid #e5e7eb; border-top-color:var(--green); border-radius:50%; animation:spin 0.6s linear infinite; margin-right:8px; vertical-align:middle; }
+  @keyframes spin { to { transform:rotate(360deg); } }
 
-  .hero-sub {
-    font-size: 18px; color: var(--muted); line-height: 1.6;
-    margin-bottom: 36px;
-    animation: fadeInUp 0.6s 0.2s ease both;
-  }
-  .hero-sub strong { color: var(--text); }
+  .hero-tags { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; animation:fadeInUp 0.5s 0.3s ease both; }
+  .tag { background:#f3f4f6; color:var(--muted); font-size:13px; padding:8px 16px; border-radius:50px; border:1px solid var(--border); cursor:pointer; transition:all 0.2s; user-select:none; }
+  .tag:hover { border-color:var(--green); color:var(--green); background:var(--green-light); }
+  .tag:active { transform:scale(0.95); }
 
-  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; animation: fadeInUp 0.6s 0.3s ease both; }
-  .btn-primary {
-    background: var(--green);
-    color: #fff; font-weight: 800; font-size: 16px;
-    padding: 16px 32px; border-radius: 14px;
-    text-decoration: none; border: none; cursor: pointer;
-    display: flex; align-items: center; gap: 8px;
-    box-shadow: 0 4px 20px #00C85340;
-    transition: all 0.2s;
-  }
-  .btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 30px #00C85450; }
-  .btn-secondary {
-    background: #fff; color: var(--text);
-    font-weight: 700; font-size: 16px;
-    padding: 16px 28px; border-radius: 14px;
-    text-decoration: none; border: 2px solid var(--border); cursor: pointer;
-    display: flex; align-items: center; gap: 8px;
-    transition: all 0.2s;
-  }
-  .btn-secondary:hover { border-color: var(--green); color: var(--green); }
+  .hero-stats { display:flex; gap:40px; margin-top:40px; animation:fadeInUp 0.5s 0.35s ease both; }
+  .stat .num { font-size:28px; font-weight:900; color:var(--dark); }
+  .stat .num span { color:var(--green); }
+  .stat .label { font-size:12px; color:var(--muted); margin-top:2px; }
 
-  .hero-stats { display: flex; gap: 32px; animation: fadeInUp 0.6s 0.4s ease both; }
-  .stat .num { font-size: 26px; font-weight: 900; color: var(--dark); }
-  .stat .num span { color: var(--green); }
-  .stat .label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  /* MOCK PHONE — below search */
+  .hero-phone-row { display:flex; gap:32px; align-items:center; justify-content:center; margin-top:60px; flex-wrap:wrap; }
+  .mock-phone { width:260px; background:#fff; border-radius:32px; border:2px solid #e5e7eb; box-shadow:0 20px 60px rgba(0,0,0,0.10),0 0 0 6px #f3f4f6; overflow:hidden; padding:14px; transition:transform 0.3s; }
+  .mock-phone:hover { transform:translateY(-6px) rotate(-1deg); }
+  .mock-search-bar { display:flex; align-items:center; gap:8px; background:#f3f4f6; border-radius:10px; padding:9px 12px; margin-bottom:12px; font-size:12px; color:#9ca3af; }
+  .mock-result-label { font-size:10px; color:var(--muted); font-weight:700; margin-bottom:7px; letter-spacing:1px; text-transform:uppercase; }
+  .mock-item { background:#f9fafb; border-radius:10px; padding:9px 11px; margin-bottom:7px; display:flex; align-items:center; gap:9px; border:1px solid #f0f0f0; transition:transform 0.2s; }
+  .mock-item:hover { transform:translateX(2px); }
+  .mock-item.best { border:1.5px solid var(--green); background:#f0fdf4; }
+  .mock-info { flex:1; }
+  .mock-store-name { font-size:11px; font-weight:700; color:var(--dark); }
+  .mock-delivery { font-size:9px; color:var(--muted); }
+  .mock-price { font-size:14px; font-weight:800; color:var(--dark); }
+  .mock-price.best { color:var(--green); }
+  .mock-badge { background:var(--green); color:#fff; font-size:8px; font-weight:800; padding:2px 6px; border-radius:5px; }
 
-  /* Hero right - mock phone */
-  .hero-right { flex-shrink: 0; z-index: 1; animation: fadeIn 0.8s 0.3s ease both; }
-  .mock-phone {
-    width: 280px;
-    background: #fff;
-    border-radius: 36px;
-    border: 2px solid #e5e7eb;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 0 0 6px #f3f4f6;
-    overflow: hidden;
-    padding: 16px;
-    transition: transform 0.3s;
-  }
-  .mock-phone:hover { transform: translateY(-6px) rotate(-1deg); }
-  .mock-search {
-    display: flex; align-items: center; gap: 8px;
-    background: #f3f4f6; border-radius: 12px;
-    padding: 10px 14px; margin-bottom: 14px;
-    font-size: 13px; color: #9ca3af;
-  }
-  .mock-result-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
-  .mock-item {
-    background: #f9fafb; border-radius: 12px;
-    padding: 10px 12px; margin-bottom: 8px;
-    display: flex; align-items: center; gap: 10px;
-    border: 1px solid #f0f0f0;
-    transition: transform 0.2s;
-  }
-  .mock-item:hover { transform: translateX(2px); }
-  .mock-item.best { border: 1.5px solid var(--green); background: #f0fdf4; }
-  .mock-store { font-size: 18px; }
-  .mock-info { flex: 1; }
-  .mock-store-name { font-size: 12px; font-weight: 700; color: var(--dark); }
-  .mock-delivery { font-size: 10px; color: var(--muted); }
-  .mock-price { font-size: 15px; font-weight: 800; color: var(--dark); }
-  .mock-price.best { color: var(--green); }
-  .mock-badge {
-    background: var(--green); color: #fff;
-    font-size: 9px; font-weight: 800;
-    padding: 2px 7px; border-radius: 6px;
-  }
+  /* HOW IT WORKS */
+  .how-section { padding:80px 5%; background:#fff; }
+  .section-header { text-align:center; margin-bottom:52px; }
+  .eyebrow { font-size:12px; font-weight:700; color:var(--green); letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; }
+  .section-header h2 { font-size:36px; font-weight:900; color:var(--dark); margin-bottom:12px; }
+  .section-header p { font-size:16px; color:var(--muted); max-width:480px; margin:0 auto; line-height:1.6; }
+  .steps { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; }
+  .step { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:32px 28px; max-width:260px; text-align:center; position:relative; transition:all 0.25s; }
+  .step:hover { transform:translateY(-6px); box-shadow:0 16px 48px rgba(0,200,83,0.14); border-color:var(--green); }
+  .step-num { position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:var(--green); color:#fff; font-size:12px; font-weight:800; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .step-icon { font-size:42px; margin-bottom:14px; }
+  .step h3 { font-size:17px; font-weight:800; color:var(--dark); margin-bottom:8px; }
+  .step p { font-size:14px; color:var(--muted); line-height:1.6; }
 
-  /* ====== SEARCH DEMO ====== */
-  .search-section {
-    background: var(--dark);
-    padding: 72px 5%;
-    text-align: center;
-  }
-  .search-section h2 { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 10px; }
-  .search-section p { font-size: 16px; color: #9ca3af; margin-bottom: 36px; }
-  .big-search {
-    display: flex; align-items: center;
-    background: #fff;
-    border-radius: 18px;
-    padding: 6px 6px 6px 20px;
-    max-width: 620px; margin: 0 auto 48px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
-    transition: box-shadow 0.2s;
-  }
-  .big-search:focus-within { box-shadow: 0 8px 40px rgba(0,200,83,0.3); }
-  .big-search input {
-    flex: 1; border: none; outline: none;
-    font-size: 16px; color: var(--text);
-    background: none; padding: 10px 0;
-  }
-  .big-search button {
-    background: var(--green); color: #fff;
-    font-weight: 800; font-size: 15px;
-    padding: 14px 28px; border-radius: 13px;
-    border: none; cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    white-space: nowrap;
-  }
-  .big-search button:hover { background: var(--green-dark); transform: scale(1.02); }
+  /* FEATURES */
+  .features-section { padding:80px 5%; background:#f9fafb; }
+  .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; max-width:1100px; margin:0 auto; }
+  .feature-card { background:#fff; border:1px solid var(--border); border-radius:20px; padding:28px; transition:all 0.25s; }
+  .feature-card:hover { border-color:var(--green); box-shadow:0 8px 32px rgba(0,200,83,0.12); transform:translateY(-3px); }
+  .feature-icon { width:52px; height:52px; background:var(--green-light); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:16px; transition:transform 0.2s; }
+  .feature-card:hover .feature-icon { transform:scale(1.1) rotate(-4deg); }
+  .feature-card h3 { font-size:17px; font-weight:800; color:var(--dark); margin-bottom:8px; }
+  .feature-card p { font-size:14px; color:var(--muted); line-height:1.6; }
 
-  /* Search result popup */
-  .search-result-popup {
-    display: none;
-    max-width: 620px; margin: -24px auto 24px;
-    background: #fff; border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
-    animation: fadeInUp 0.3s ease;
-    text-align: left;
-  }
-  .search-result-popup.visible { display: block; }
-  .search-result-header {
-    background: var(--green); color: #fff;
-    padding: 12px 20px; font-size: 13px; font-weight: 700;
-  }
-  .search-result-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 20px; border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-  .search-result-row:last-child { border: none; }
-  .search-result-row:hover { background: #f9fafb; }
-  .search-result-row .store-name { font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
-  .search-result-row .store-price { font-size: 15px; font-weight: 800; color: var(--dark); }
-  .search-result-row .store-price.lowest { color: var(--green); }
-  .search-result-row .best-tag { background: var(--green); color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px; }
-  .search-loading { padding: 20px; text-align: center; color: var(--muted); font-size: 14px; }
-  .loader { display: inline-block; width: 20px; height: 20px; border: 2px solid #e5e7eb; border-top-color: var(--green); border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* STORES */
+  .stores-section { padding:60px 5%; background:#fff; text-align:center; }
+  .stores-section h2 { font-size:22px; font-weight:700; color:var(--muted); margin-bottom:32px; }
+  .stores-row { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .store-pill { display:flex; align-items:center; gap:10px; background:#f9fafb; border:1px solid var(--border); border-radius:50px; padding:12px 22px; font-size:15px; font-weight:700; color:var(--text); transition:all 0.2s; }
+  .store-pill:hover { border-color:var(--green); background:var(--green-light); transform:translateY(-2px); }
+  .store-pill .s-icon { font-size:20px; }
 
-  .popular-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  .tag {
-    background: #1e1e30; color: #9ca3af;
-    font-size: 13px; padding: 8px 16px;
-    border-radius: 50px; border: 1px solid #2a2a45;
-    cursor: pointer; transition: all 0.2s;
-    user-select: none;
-  }
-  .tag:hover { border-color: var(--green); color: var(--green); }
-  .tag:active { transform: scale(0.96); }
+  /* TESTIMONIALS */
+  .testimonials { padding:80px 5%; background:#f9fafb; }
+  .testi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; max-width:1100px; margin:0 auto; }
+  .testi-card { background:#fff; border:1px solid var(--border); border-radius:20px; padding:24px; transition:all 0.2s; }
+  .testi-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.07); }
+  .testi-stars { color:#F5C842; font-size:16px; margin-bottom:12px; }
+  .testi-text { font-size:15px; color:var(--text); line-height:1.7; margin-bottom:16px; font-style:italic; }
+  .testi-user { display:flex; align-items:center; gap:10px; }
+  .testi-avatar { width:40px; height:40px; background:var(--green-light); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; }
+  .testi-name { font-size:14px; font-weight:700; color:var(--dark); }
+  .testi-loc { font-size:12px; color:var(--muted); }
 
-  /* ====== HOW IT WORKS ====== */
-  .how-section { padding: 80px 5%; background: #fff; }
-  .section-header { text-align: center; margin-bottom: 56px; }
-  .eyebrow { font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
-  .section-header h2 { font-size: 38px; font-weight: 900; color: var(--dark); margin-bottom: 12px; }
-  .section-header p { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+  /* CTA */
+  .cta-section { padding:80px 5%; background:linear-gradient(135deg,#0D2818 0%,var(--dark) 100%); text-align:center; }
+  .cta-section h2 { font-size:40px; font-weight:900; color:#fff; margin-bottom:14px; }
+  .cta-section p { font-size:18px; color:#9ca3af; margin-bottom:36px; }
+  .cta-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .app-btn { display:flex; align-items:center; gap:10px; background:#fff; color:var(--dark); padding:14px 24px; border-radius:14px; text-decoration:none; font-weight:700; transition:all 0.2s; }
+  .app-btn:hover { transform:translateY(-3px); box-shadow:0 8px 30px rgba(255,255,255,0.2); }
+  .app-btn .app-icon { font-size:28px; }
+  .app-btn .app-text small { display:block; font-size:11px; color:var(--muted); font-weight:400; }
+  .app-btn .app-text strong { font-size:16px; }
+  .btn-primary { background:var(--green); color:#fff; font-weight:800; font-size:16px; padding:16px 32px; border-radius:14px; text-decoration:none; border:none; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 20px #00C85340; transition:all 0.2s; }
+  .btn-primary:hover { background:var(--green-dark); transform:translateY(-2px); }
 
-  .steps { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
-  .step {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 24px; padding: 32px 28px;
-    max-width: 260px; text-align: center;
-    position: relative; transition: all 0.25s;
-    cursor: default;
-  }
-  .step:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,200,83,0.14); border-color: var(--green); }
-  .step-num {
-    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-    background: var(--green); color: #fff;
-    font-size: 12px; font-weight: 800;
-    width: 28px; height: 28px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .step-icon { font-size: 44px; margin-bottom: 16px; }
-  .step h3 { font-size: 18px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
-  .step p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  /* FOOTER */
+  footer { background:#f3f4f6; border-top:1px solid var(--border); padding:40px 5% 24px; }
+  .footer-top { display:flex; justify-content:space-between; flex-wrap:wrap; gap:32px; margin-bottom:32px; }
+  .footer-brand .logo { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .footer-brand p { font-size:13px; color:var(--muted); max-width:240px; line-height:1.6; }
+  .footer-col h4 { font-size:14px; font-weight:700; color:var(--dark); margin-bottom:14px; }
+  .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .footer-col ul a { text-decoration:none; font-size:13px; color:var(--muted); transition:color 0.2s; }
+  .footer-col ul a:hover { color:var(--green); }
+  .footer-bottom { border-top:1px solid var(--border); padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .footer-bottom p { font-size:13px; color:var(--muted); }
+  .footer-bottom .made span { color:var(--green); }
 
-  /* ====== FEATURES ====== */
-  .features-section { padding: 80px 5%; background: #f9fafb; }
-  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-  .feature-card {
-    background: #fff; border: 1px solid var(--border);
-    border-radius: 20px; padding: 28px;
-    transition: all 0.25s; cursor: default;
-  }
-  .feature-card:hover { border-color: var(--green); box-shadow: 0 8px 32px rgba(0,200,83,0.12); transform: translateY(-3px); }
-  .feature-icon {
-    width: 52px; height: 52px;
-    background: var(--green-light);
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px; margin-bottom: 16px;
-    transition: transform 0.2s;
-  }
-  .feature-card:hover .feature-icon { transform: scale(1.1) rotate(-4deg); }
-  .feature-card h3 { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
-  .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  /* FOUNDER */
+  .founder-section { padding:70px 5%; background:#fff; }
+  .founder-card { max-width:680px; margin:0 auto; display:flex; align-items:center; gap:32px; background:linear-gradient(135deg,#f0fdf4,#fff); border:2px solid var(--green); border-radius:28px; padding:36px; box-shadow:0 8px 32px rgba(0,200,83,0.10); }
+  .founder-avatar { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#00C853,#009624); display:flex; align-items:center; justify-content:center; font-size:44px; flex-shrink:0; box-shadow:0 4px 20px rgba(0,200,83,0.3); }
+  .founder-info .label { font-size:11px; font-weight:700; color:var(--green); letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
+  .founder-info h3 { font-size:26px; font-weight:900; color:var(--dark); margin-bottom:6px; }
+  .founder-info p { font-size:14px; color:var(--muted); line-height:1.7; }
 
-  /* ====== STORES ====== */
-  .stores-section { padding: 60px 5%; background: #fff; text-align: center; }
-  .stores-section h2 { font-size: 22px; font-weight: 700; color: var(--muted); margin-bottom: 36px; }
-  .stores-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .store-pill {
-    display: flex; align-items: center; gap: 10px;
-    background: #f9fafb; border: 1px solid var(--border);
-    border-radius: 50px; padding: 12px 22px;
-    font-size: 15px; font-weight: 700; color: var(--text);
-    transition: all 0.2s; cursor: default;
-  }
-  .store-pill:hover { border-color: var(--green); background: var(--green-light); transform: translateY(-2px); }
-  .store-pill .s-icon { font-size: 22px; }
+  /* TOAST */
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--dark); color:#fff; padding:12px 24px; border-radius:50px; font-size:14px; font-weight:600; z-index:9999; pointer-events:none; transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),opacity 0.35s; opacity:0; white-space:nowrap; }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
 
-  /* ====== TODAY'S DEAL ====== */
-  .deal-section { padding: 60px 5%; background: #fff; }
+  /* SCROLL REVEAL */
+  .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.5s,transform 0.5s; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
 
-  /* ====== TESTIMONIALS ====== */
-  .testimonials { padding: 80px 5%; background: #f9fafb; }
-  .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-  .testi-card {
-    background: #fff; border: 1px solid var(--border);
-    border-radius: 20px; padding: 24px;
-    transition: all 0.2s;
-  }
-  .testi-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
-  .testi-stars { color: #F5C842; font-size: 16px; margin-bottom: 12px; }
-  .testi-text { font-size: 15px; color: var(--text); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
-  .testi-user { display: flex; align-items: center; gap: 10px; }
-  .testi-avatar {
-    width: 40px; height: 40px;
-    background: var(--green-light);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-  }
-  .testi-name { font-size: 14px; font-weight: 700; color: var(--dark); }
-  .testi-loc { font-size: 12px; color: var(--muted); }
+  /* ANIMATIONS */
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+  @keyframes fadeInDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
 
-  /* ====== CTA BANNER ====== */
-  .cta-section {
-    padding: 80px 5%;
-    background: linear-gradient(135deg, #0D2818 0%, var(--dark) 100%);
-    text-align: center;
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    .hero h1 { font-size:38px; }
+    .hero-stats { gap:24px; }
+    .nav-links,.nav-cta { display:none; }
+    .nav-hamburger { display:flex; }
+    .founder-card { flex-direction:column; text-align:center; }
   }
-  .cta-section h2 { font-size: 40px; font-weight: 900; color: #fff; margin-bottom: 14px; }
-  .cta-section p { font-size: 18px; color: #9ca3af; margin-bottom: 36px; }
-  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .app-btn {
-    display: flex; align-items: center; gap: 10px;
-    background: #fff; color: var(--dark);
-    padding: 14px 24px; border-radius: 14px;
-    text-decoration: none; font-weight: 700;
-    transition: all 0.2s;
+  @media(max-width:600px){
+    .hero h1 { font-size:30px; }
+    .hero-search-box { flex-direction:column; padding:10px; border-radius:16px; gap:8px; }
+    .hero-search-box input { width:100%; text-align:center; }
+    .hero-search-box button { width:100%; border-radius:12px; }
+    .section-header h2 { font-size:26px; }
+    .cta-section h2 { font-size:26px; }
+    .hero-stats { flex-wrap:wrap; justify-content:center; }
   }
-  .app-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255,255,255,0.2); }
-  .app-btn .app-icon { font-size: 28px; }
-  .app-btn .app-text { text-align: left; }
-  .app-btn .app-text small { display: block; font-size: 11px; color: var(--muted); font-weight: 400; }
-  .app-btn .app-text strong { font-size: 16px; }
-
-  /* ====== FOOTER ====== */
-  footer {
-    background: #f3f4f6; border-top: 1px solid var(--border);
-    padding: 40px 5% 24px;
-  }
-  .footer-top { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 32px; margin-bottom: 32px; }
-  .footer-brand .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .footer-brand p { font-size: 13px; color: var(--muted); max-width: 240px; line-height: 1.6; }
-  .footer-col h4 { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 14px; }
-  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  .footer-col ul a { text-decoration: none; font-size: 13px; color: var(--muted); transition: color 0.2s; }
-  .footer-col ul a:hover { color: var(--green); }
-  .footer-bottom { border-top: 1px solid var(--border); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-  .footer-bottom p { font-size: 13px; color: var(--muted); }
-  .footer-bottom .made span { color: var(--green); }
-
-  /* ====== TOAST ====== */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: var(--dark); color: #fff;
-    padding: 12px 24px; border-radius: 50px;
-    font-size: 14px; font-weight: 600;
-    z-index: 9999; pointer-events: none;
-    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s;
-    opacity: 0; white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  /* ====== SCROLL REVEAL ====== */
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.5s, transform 0.5s; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  /* ====== RESPONSIVE ====== */
-  @media (max-width: 900px) {
-    .hero { flex-direction: column; text-align: center; padding-top: 100px; min-height: auto; padding-bottom: 60px; }
-    .hero h1 { font-size: 38px; }
-    .hero-actions { justify-content: center; }
-    .hero-stats { justify-content: center; }
-    .hero-right { order: -1; }
-    .nav-links { display: none; }
-    .nav-cta { display: none; }
-    .nav-hamburger { display: flex; }
-  }
-  @media (max-width: 600px) {
-    .hero h1 { font-size: 30px; }
-    .hero-sub { font-size: 15px; }
-    .section-header h2 { font-size: 28px; }
-    .cta-section h2 { font-size: 28px; }
-    .big-search { flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; }
-    .big-search input { width: 100%; }
-    .big-search button { width: 100%; border-radius: 10px; }
-    .mock-phone { width: 240px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
+  @media(prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important} }
 </style>
 </head>
 <body>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <!-- NAVBAR -->
@@ -481,109 +258,48 @@
     <li><a href="#how">Kaise Kaam Karta Hai</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#stores">Stores</a></li>
-    <li><a href="#blog">Blog</a></li>
+    <li><a href="#founder">Founder</a></li>
   </ul>
   <a href="#download" class="nav-cta">🚀 App Download Karo</a>
-  <div class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </div>
 </nav>
-
-<!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="#how" onclick="closeMenu()">Kaise Kaam Karta Hai</a>
   <a href="#features" onclick="closeMenu()">Features</a>
   <a href="#stores" onclick="closeMenu()">Stores</a>
-  <a href="#blog" onclick="closeMenu()">Blog</a>
+  <a href="#founder" onclick="closeMenu()">Founder</a>
   <a href="#download" class="m-cta" onclick="closeMenu()">🚀 App Download Karo</a>
 </div>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-left">
-    <div class="hero-badge">
-      <div class="dot"></div>
-      🇮🇳 India ka #1 Price Comparison App
-    </div>
-    <h1>Sabse <span class="highlight">Sasta</span> Price<br/>Ek Click Mein!</h1>
-    <p class="hero-sub">
-      Koi bhi product search karo — Cprice turant compare karta hai
-      <strong>Amazon, Flipkart, Meesho</strong> aur 20+ stores ka price.<br/>
-      Paise bachao, smart shopping karo! 💰
-    </p>
-    <div class="hero-actions">
-      <a href="#search" class="btn-primary">🔍 Abhi Search Karo</a>
-      <a href="#download" class="btn-secondary">📱 App Download Karo</a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat">
-        <div class="num" data-target="50">0<span>L+</span></div>
-        <div class="label">Products tracked</div>
-      </div>
-      <div class="stat">
-        <div class="num">20<span>+</span></div>
-        <div class="label">Stores compare</div>
-      </div>
-      <div class="stat">
-        <div class="num">₹800<span>Cr+</span></div>
-        <div class="label">Users ne bachaye</div>
-      </div>
+<!-- HERO — SEARCH FRONT & CENTER -->
+<section class="hero" id="home">
+  <div class="hero-badge">
+    <div class="dot"></div>
+    🇮🇳 India ka #1 Price Comparison App
+  </div>
+  <h1>Sabse <span class="highlight">Sasta</span> Price<br/>Ek Click Mein!</h1>
+  <p class="hero-sub">
+    Koi bhi product search karo — Cprice turant compare karta hai
+    <strong>Amazon, Flipkart, Meesho</strong> aur 20+ stores ka price.
+  </p>
+
+  <!-- HERO SEARCH — MAIN FOCUS -->
+  <div class="hero-search-wrap" id="search">
+    <div class="hero-search-box">
+      <span style="font-size:22px;margin-right:4px;">🔍</span>
+      <input type="text" id="heroInput" placeholder="e.g. iPhone 15, Samsung TV, Nike Shoes..." autocomplete="off" />
+      <button id="heroBtn" onclick="doSearch()">Compare Karo →</button>
     </div>
   </div>
 
-  <div class="hero-right">
-    <div class="mock-phone">
-      <div class="mock-search">🔍 &nbsp;iPhone 15 search kiya...</div>
-      <div class="mock-result-label">Price Comparison</div>
-      <div class="mock-item best">
-        <div class="mock-store">🛒</div>
-        <div class="mock-info">
-          <div class="mock-store-name">Flipkart <span class="mock-badge">SASTA</span></div>
-          <div class="mock-delivery">Free delivery · 2 days</div>
-        </div>
-        <div class="mock-price best">₹67,999</div>
-      </div>
-      <div class="mock-item">
-        <div class="mock-store">📦</div>
-        <div class="mock-info">
-          <div class="mock-store-name">Amazon</div>
-          <div class="mock-delivery">Prime · Same day</div>
-        </div>
-        <div class="mock-price">₹69,499</div>
-      </div>
-      <div class="mock-item">
-        <div class="mock-store">🏪</div>
-        <div class="mock-info">
-          <div class="mock-store-name">Croma</div>
-          <div class="mock-delivery">Store pickup</div>
-        </div>
-        <div class="mock-price">₹72,990</div>
-      </div>
-      <div style="text-align:center;margin-top:12px;">
-        <div style="background:#00C853;color:#fff;font-size:13px;font-weight:800;padding:12px;border-radius:12px;">
-          🛒 Flipkart pe Kharido — Save ₹5,000!
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SEARCH DEMO -->
-<section class="search-section" id="search">
-  <h2>Kuch bhi search karo 🔍</h2>
-  <p>Mobile se lekar Atta tak — Cprice har cheez compare karta hai</p>
-  <div class="big-search">
-    <span style="font-size:20px;">🔍</span>
-    <input type="text" id="searchInput" placeholder="e.g. Samsung S24, Basmati Rice, Nike Shoes..." autocomplete="off"/>
-    <button id="searchBtn" onclick="doSearch()">Compare Karo →</button>
+  <!-- RESULT POPUP -->
+  <div class="hero-result-popup" id="heroResult">
+    <div id="heroResultInner"></div>
   </div>
 
-  <!-- Search Result Popup -->
-  <div class="search-result-popup" id="searchResult">
-    <div id="searchResultInner"></div>
-  </div>
-
-  <div class="popular-tags">
+  <div class="hero-tags">
     <div class="tag" onclick="fillSearch('iPhone 15')">📱 iPhone 15</div>
     <div class="tag" onclick="fillSearch('MacBook Air')">💻 MacBook Air</div>
     <div class="tag" onclick="fillSearch('Nike Shoes')">👟 Nike Shoes</div>
@@ -592,60 +308,45 @@
     <div class="tag" onclick="fillSearch('Sony Headphones')">🎧 Sony Headphones</div>
     <div class="tag" onclick="fillSearch('Levi\'s Jeans')">👕 Levi's Jeans</div>
   </div>
-</section>
 
-<!-- TODAY'S DEAL -->
-<section class="deal-section reveal">
-  <div class="section-header">
-    <div class="eyebrow">🔥 Aaj Ka Deal</div>
-    <h2>Real Products — Real Savings! 💰</h2>
-    <p>Cprice verified deals — seedha Amazon se!</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="num">50<span>L+</span></div><div class="label">Products tracked</div></div>
+    <div class="stat"><div class="num">20<span>+</span></div><div class="label">Stores compare</div></div>
+    <div class="stat"><div class="num">₹800<span>Cr+</span></div><div class="label">Users ne bachaye</div></div>
   </div>
 
-  <div style="max-width: 340px; margin: 0 auto; background: #f9fafb; border: 2px solid #00C853; border-radius: 24px; padding: 24px; box-shadow: 0 8px 30px rgba(0,200,83,0.12);">
-    <div style="display:inline-block; background:#00C853; color:#fff; font-size:11px; font-weight:800; padding:4px 12px; border-radius:20px; margin-bottom:16px; letter-spacing:1px;">
-      ✅ CPRICE VERIFIED DEAL
-    </div>
-    <div style="background:#e8f5e9; border-radius:16px; height:160px; display:flex; align-items:center; justify-content:center; font-size:72px; margin-bottom:16px;">
-      🎒
-    </div>
-    <div style="font-size:15px; font-weight:800; color:#1a1a2e; margin-bottom:6px; line-height:1.4;">
-      HOT SHOT PHANTOM-X Backpack
-    </div>
-    <div style="font-size:12px; color:#6b7280; margin-bottom:14px;">
-      Detachable Key Ring · Trolley Sleeve · Laptop Compartment
-    </div>
-    <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
-      <span style="font-size:28px; font-weight:900; color:#00C853;">₹998</span>
-      <span style="font-size:14px; color:#9ca3af; text-decoration:line-through;">₹1,499</span>
-      <span style="background:#00C85220; color:#00C853; font-size:11px; font-weight:800; padding:3px 8px; border-radius:8px;">33% OFF</span>
-    </div>
-    <div style="background:#fff3e0; border-radius:10px; padding:8px 12px; margin-bottom:16px; font-size:12px; color:#e65100;">
-      💰 Aapka Commission: <strong>₹99.8</strong> (10%) — har sale pe!
-    </div>
-    <div style="margin-bottom:16px;">
-      <div style="font-size:11px; font-weight:700; color:#9ca3af; letter-spacing:1px; margin-bottom:8px;">STORE COMPARISON</div>
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #e5e7eb;">
-        <span style="font-size:13px;">📦 Amazon</span>
-        <span style="font-size:14px; font-weight:800; color:#00C853;">₹998 ✅</span>
+  <!-- MOCK PHONE below -->
+  <div class="hero-phone-row reveal">
+    <div class="mock-phone">
+      <div class="mock-search-bar">🔍 &nbsp;iPhone 15 search kiya...</div>
+      <div class="mock-result-label">Price Comparison</div>
+      <div class="mock-item best">
+        <span style="font-size:16px;">🛒</span>
+        <div class="mock-info">
+          <div class="mock-store-name">Flipkart <span class="mock-badge">SASTA</span></div>
+          <div class="mock-delivery">Free delivery · 2 days</div>
+        </div>
+        <div class="mock-price best">₹67,999</div>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #e5e7eb;">
-        <span style="font-size:13px;">🛒 Flipkart</span>
-        <span style="font-size:14px; font-weight:600; color:#6b7280;">₹1,199</span>
+      <div class="mock-item">
+        <span style="font-size:16px;">📦</span>
+        <div class="mock-info">
+          <div class="mock-store-name">Amazon</div>
+          <div class="mock-delivery">Prime · Same day</div>
+        </div>
+        <div class="mock-price">₹69,499</div>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
-        <span style="font-size:13px;">📲 Meesho</span>
-        <span style="font-size:14px; font-weight:600; color:#6b7280;">₹1,099</span>
+      <div class="mock-item">
+        <span style="font-size:16px;">🏪</span>
+        <div class="mock-info">
+          <div class="mock-store-name">Croma</div>
+          <div class="mock-delivery">Store pickup</div>
+        </div>
+        <div class="mock-price">₹72,990</div>
       </div>
-    </div>
-    <a href="https://amzn.to/4xizRAm" target="_blank" rel="noopener"
-       style="display:block; background:#00C853; color:#fff; text-align:center; font-size:16px; font-weight:800; padding:16px; border-radius:14px; text-decoration:none; box-shadow:0 4px 20px rgba(0,200,83,0.35); transition:all 0.2s;"
-       onmouseover="this.style.background='#009624'; this.style.transform='translateY(-2px)'"
-       onmouseout="this.style.background='#00C853'; this.style.transform='translateY(0)'">
-      🛒 Amazon pe Kharido — ₹998
-    </a>
-    <div style="text-align:center; margin-top:10px; font-size:11px; color:#9ca3af;">
-      🔒 Secure checkout · Amazon pe direct jayenge
+      <div style="text-align:center;margin-top:10px;background:#00C853;color:#fff;font-size:12px;font-weight:800;padding:10px;border-radius:10px;">
+        🛒 Flipkart pe Kharido — Save ₹5,000!
+      </div>
     </div>
   </div>
 </section>
@@ -664,13 +365,13 @@
       <h3>Product Search Karo</h3>
       <p>Koi bhi product ka naam type karo ya barcode scan karo — result aayega turant!</p>
     </div>
-    <div class="step reveal" style="transition-delay:0.1s">
+    <div class="step reveal" style="transition-delay:.1s">
       <div class="step-num">2</div>
       <div class="step-icon">⚖️</div>
       <h3>Prices Compare Karo</h3>
       <p>20+ stores ka price ek jagah dekho — Amazon, Flipkart, Meesho, Croma sab ek saath!</p>
     </div>
-    <div class="step reveal" style="transition-delay:0.2s">
+    <div class="step reveal" style="transition-delay:.2s">
       <div class="step-num">3</div>
       <div class="step-icon">💰</div>
       <h3>Sasta Kharido!</h3>
@@ -687,36 +388,12 @@
     <p>Cprice sirf price nahi dikhata — aapka pura shopping experience smart banata hai</p>
   </div>
   <div class="features-grid">
-    <div class="feature-card reveal">
-      <div class="feature-icon">📉</div>
-      <h3>Price History Graph</h3>
-      <p>6 mahine ka price track dekho. Kab sasta tha, kab mehenga — sab pata chalega buying ka sahi time!</p>
-    </div>
-    <div class="feature-card reveal" style="transition-delay:0.05s">
-      <div class="feature-icon">🔔</div>
-      <h3>Price Drop Alert</h3>
-      <p>Apna target price set karo — jab price girega, Cprice aapko WhatsApp ya email pe notify karega!</p>
-    </div>
-    <div class="feature-card reveal" style="transition-delay:0.1s">
-      <div class="feature-icon">🏷️</div>
-      <h3>Coupon & Cashback</h3>
-      <p>Hidden coupons aur cashback offers jo aur koi nahi batata — Cprice automatically apply karta hai!</p>
-    </div>
-    <div class="feature-card reveal" style="transition-delay:0.15s">
-      <div class="feature-icon">🤖</div>
-      <h3>AI Smart Suggestion</h3>
-      <p>"Yeh product agle week mein sasta hoga" — Cprice ka AI aapko pehle se bata deta hai!</p>
-    </div>
-    <div class="feature-card reveal" style="transition-delay:0.2s">
-      <div class="feature-icon">❤️</div>
-      <h3>Wishlist & Tracking</h3>
-      <p>Apne favorite products save karo. Jab bhi price drop ho, aapko instantly pata chalega!</p>
-    </div>
-    <div class="feature-card reveal" style="transition-delay:0.25s">
-      <div class="feature-icon">📊</div>
-      <h3>Best Time to Buy</h3>
-      <p>Sale kab aayegi? Festival offers kab tak chalenge? Cprice sab predict karta hai!</p>
-    </div>
+    <div class="feature-card reveal"><div class="feature-icon">📉</div><h3>Price History Graph</h3><p>6 mahine ka price track dekho. Kab sasta tha, kab mehenga — sab pata chalega buying ka sahi time!</p></div>
+    <div class="feature-card reveal" style="transition-delay:.05s"><div class="feature-icon">🔔</div><h3>Price Drop Alert</h3><p>Apna target price set karo — jab price girega, Cprice aapko WhatsApp ya email pe notify karega!</p></div>
+    <div class="feature-card reveal" style="transition-delay:.1s"><div class="feature-icon">🏷️</div><h3>Coupon & Cashback</h3><p>Hidden coupons aur cashback offers jo aur koi nahi batata — Cprice automatically apply karta hai!</p></div>
+    <div class="feature-card reveal" style="transition-delay:.15s"><div class="feature-icon">🤖</div><h3>AI Smart Suggestion</h3><p>"Yeh product agle week mein sasta hoga" — Cprice ka AI aapko pehle se bata deta hai!</p></div>
+    <div class="feature-card reveal" style="transition-delay:.2s"><div class="feature-icon">❤️</div><h3>Wishlist & Tracking</h3><p>Apne favorite products save karo. Jab bhi price drop ho, aapko instantly pata chalega!</p></div>
+    <div class="feature-card reveal" style="transition-delay:.25s"><div class="feature-icon">📊</div><h3>Best Time to Buy</h3><p>Sale kab aayegi? Festival offers kab tak chalenge? Cprice sab predict karta hai!</p></div>
   </div>
 </section>
 
@@ -747,35 +424,33 @@
     <div class="testi-card reveal">
       <div class="testi-stars">⭐⭐⭐⭐⭐</div>
       <p class="testi-text">"iPhone lena tha, soch raha tha Amazon se lunga. Cprice ne bataya Flipkart pe ₹4,500 sasta hai. Yaar, game changer hai yeh app!"</p>
-      <div class="testi-user">
-        <div class="testi-avatar">👨</div>
-        <div>
-          <div class="testi-name">Rahul Sharma</div>
-          <div class="testi-loc">Delhi · Tech Enthusiast</div>
-        </div>
-      </div>
+      <div class="testi-user"><div class="testi-avatar">👨</div><div><div class="testi-name">Rahul Sharma</div><div class="testi-loc">Delhi · Tech Enthusiast</div></div></div>
     </div>
-    <div class="testi-card reveal" style="transition-delay:0.1s">
+    <div class="testi-card reveal" style="transition-delay:.1s">
       <div class="testi-stars">⭐⭐⭐⭐⭐</div>
       <p class="testi-text">"Ghar ka saman, bachon ke kapde, sab Cprice se compare karke kharidti hoon. Is mahine ₹3,200 bacha liye! Bahut acha app hai."</p>
-      <div class="testi-user">
-        <div class="testi-avatar">👩</div>
-        <div>
-          <div class="testi-name">Priya Verma</div>
-          <div class="testi-loc">Mumbai · Homemaker</div>
-        </div>
-      </div>
+      <div class="testi-user"><div class="testi-avatar">👩</div><div><div class="testi-name">Priya Verma</div><div class="testi-loc">Mumbai · Homemaker</div></div></div>
     </div>
-    <div class="testi-card reveal" style="transition-delay:0.2s">
+    <div class="testi-card reveal" style="transition-delay:.2s">
       <div class="testi-stars">⭐⭐⭐⭐⭐</div>
       <p class="testi-text">"Price drop alert feature mast hai! TV ka price set kiya tha, 2 hafte baad notification aaya — ₹8,000 sasta ho gaya tha. Turant kharida!"</p>
-      <div class="testi-user">
-        <div class="testi-avatar">👨‍💼</div>
-        <div>
-          <div class="testi-name">Amit Patel</div>
-          <div class="testi-loc">Ahmedabad · Business Owner</div>
-        </div>
-      </div>
+      <div class="testi-user"><div class="testi-avatar">👨‍💼</div><div><div class="testi-name">Amit Patel</div><div class="testi-loc">Ahmedabad · Business Owner</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder-section" id="founder">
+  <div class="section-header reveal">
+    <div class="eyebrow">Founder</div>
+    <h2>Cprice ke peeche kaun hai? 👤</h2>
+  </div>
+  <div class="founder-card reveal">
+    <div class="founder-avatar">👨‍💻</div>
+    <div class="founder-info">
+      <div class="label">Founder & CEO</div>
+      <h3>Aditya Rajput</h3>
+      <p>Aditya ne Cprice banaya ek simple sapne se — ki koi bhi Indian shopping mein thaga na jaye. Unka vision hai ki smart technology se har ghar ke budget ko protect kiya jaye. "Sabse pehle user, baad mein baaki sab" — yahi Cprice ka DNA hai.</p>
     </div>
   </div>
 </section>
@@ -787,21 +462,13 @@
   <div class="cta-btns">
     <a href="#" class="app-btn" onclick="showToast('🤖 Play Store pe jald aayega!')">
       <div class="app-icon">🤖</div>
-      <div class="app-text">
-        <small>Download on</small>
-        <strong>Google Play</strong>
-      </div>
+      <div class="app-text"><small>Download on</small><strong>Google Play</strong></div>
     </a>
     <a href="#" class="app-btn" onclick="showToast('🍎 App Store pe jald aayega!')">
       <div class="app-icon">🍎</div>
-      <div class="app-text">
-        <small>Download on</small>
-        <strong>App Store</strong>
-      </div>
+      <div class="app-text"><small>Download on</small><strong>App Store</strong></div>
     </a>
-    <a href="#search" class="btn-primary" style="padding: 14px 28px;">
-      🌐 Website Use Karo
-    </a>
+    <a href="#search" class="btn-primary">🌐 Website Use Karo</a>
   </div>
 </section>
 
@@ -810,16 +477,16 @@
   <div class="footer-top">
     <div class="footer-brand">
       <div class="logo">
-        <div class="nav-logo-icon" style="width:32px;height:32px;background:#00C853;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;">C</div>
+        <div style="width:32px;height:32px;background:#00C853;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;">C</div>
         <span style="font-size:18px;font-weight:800;color:#1a1a2e;"><span style="color:#00C853">C</span>price</span>
       </div>
-      <p>India ka sabse smart price comparison platform. Compare karo, bachao karo!</p>
+      <p>India ka sabse smart price comparison platform. Compare karo, bachao karo!<br/><strong style="color:var(--green)">Founded by Aditya Rajput 🇮🇳</strong></p>
     </div>
     <div class="footer-col">
       <h4>Company</h4>
       <ul>
-        <li><a href="#">Hamare Baare Mein</a></li>
-        <li><a href="#" id="blog">Blog</a></li>
+        <li><a href="#founder">Hamare Baare Mein</a></li>
+        <li><a href="#">Blog</a></li>
         <li><a href="#">Careers</a></li>
         <li><a href="#">Press</a></li>
       </ul>
@@ -836,153 +503,220 @@
     <div class="footer-col">
       <h4>Popular Searches</h4>
       <ul>
-        <li><a href="#search" onclick="fillSearch('iPhone 15')">iPhone Price Compare</a></li>
-        <li><a href="#search" onclick="fillSearch('Samsung Galaxy S24')">Samsung Galaxy Deals</a></li>
-        <li><a href="#search" onclick="fillSearch('Laptop')">Laptop Sasta Kahan</a></li>
-        <li><a href="#search" onclick="fillSearch('Samsung TV')">TV Best Price</a></li>
+        <li><a href="#" onclick="fillSearch('iPhone 15');return false;">iPhone Price Compare</a></li>
+        <li><a href="#" onclick="fillSearch('Samsung Galaxy S24');return false;">Samsung Galaxy Deals</a></li>
+        <li><a href="#" onclick="fillSearch('Laptop');return false;">Laptop Sasta Kahan</a></li>
+        <li><a href="#" onclick="fillSearch('Samsung TV');return false;">TV Best Price</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
     <p>© 2025 Cprice. All rights reserved.</p>
-    <p class="made">Made with <span>❤️</span> in India 🇮🇳</p>
+    <p class="made">Made with <span>❤️</span> in India 🇮🇳 by Aditya Rajput</p>
   </div>
 </footer>
 
 <script>
-  /* ===== NAVBAR SCROLL ===== */
-  window.addEventListener('scroll', () => {
-    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
-  });
+// ---- Product database with image emoji + store links ----
+const products = {
+  'iphone 15': {
+    name: 'Apple iPhone 15',
+    img: '📱',
+    color: '#1c1c1e',
+    stores: [
+      { name: '🛒 Flipkart', price: 67999, delivery: 'Free delivery · 2 days', url: 'https://www.flipkart.com/search?q=iphone+15', best: true },
+      { name: '📦 Amazon', price: 69499, delivery: 'Prime · Same day', url: 'https://www.amazon.in/s?k=iphone+15' },
+      { name: '🏪 Croma', price: 72990, delivery: 'Store pickup', url: 'https://www.croma.com/searchB?q=iphone+15' },
+      { name: '🏠 Reliance Digital', price: 73990, delivery: 'Store pickup', url: 'https://www.reliancedigital.in/search?q=iphone+15' },
+    ]
+  },
+  'macbook air': {
+    name: 'Apple MacBook Air M2',
+    img: '💻',
+    color: '#6e6e73',
+    stores: [
+      { name: '📦 Amazon', price: 92900, delivery: 'Prime · 1 day', url: 'https://www.amazon.in/s?k=macbook+air+m2', best: true },
+      { name: '🛒 Flipkart', price: 94990, delivery: 'Free delivery', url: 'https://www.flipkart.com/search?q=macbook+air+m2' },
+      { name: '🏠 Reliance Digital', price: 97990, delivery: 'Store pickup', url: 'https://www.reliancedigital.in/search?q=macbook+air' },
+    ]
+  },
+  'nike shoes': {
+    name: 'Nike Running Shoes',
+    img: '👟',
+    color: '#ff6b35',
+    stores: [
+      { name: '👗 Myntra', price: 3499, delivery: 'Free · 3 days', url: 'https://www.myntra.com/nike', best: true },
+      { name: '📦 Amazon', price: 3799, delivery: 'Prime · 1 day', url: 'https://www.amazon.in/s?k=nike+shoes' },
+      { name: '🛒 Flipkart', price: 3999, delivery: 'Free delivery', url: 'https://www.flipkart.com/search?q=nike+shoes' },
+    ]
+  },
+  'samsung tv': {
+    name: 'Samsung 43" 4K Smart TV',
+    img: '📺',
+    color: '#1428a0',
+    stores: [
+      { name: '🛒 Flipkart', price: 32990, delivery: 'Free delivery', url: 'https://www.flipkart.com/search?q=samsung+4k+tv', best: true },
+      { name: '📦 Amazon', price: 34499, delivery: 'Prime · 2 days', url: 'https://www.amazon.in/s?k=samsung+4k+tv' },
+      { name: '🏠 Reliance Digital', price: 35990, delivery: 'Store pickup', url: 'https://www.reliancedigital.in/search?q=samsung+tv' },
+      { name: '🏪 Croma', price: 36990, delivery: 'Store pickup', url: 'https://www.croma.com/searchB?q=samsung+tv' },
+    ]
+  },
+  'basmati rice': {
+    name: 'India Gate Basmati Rice 5kg',
+    img: '🍚',
+    color: '#8b4513',
+    stores: [
+      { name: '📦 Amazon', price: 189, delivery: 'Prime · Same day', url: 'https://www.amazon.in/s?k=basmati+rice+5kg', best: true },
+      { name: '🥦 BigBasket', price: 199, delivery: 'Express 3hr', url: 'https://www.bigbasket.com/ps/?q=basmati+rice' },
+      { name: '⚡ Blinkit', price: 215, delivery: '10 min delivery', url: 'https://blinkit.com/s/?q=basmati+rice' },
+    ]
+  },
+  'sony headphones': {
+    name: 'Sony WH-CH520 Wireless',
+    img: '🎧',
+    color: '#000000',
+    stores: [
+      { name: '📦 Amazon', price: 2999, delivery: 'Prime · 1 day', url: 'https://www.amazon.in/s?k=sony+headphones', best: true },
+      { name: '🛒 Flipkart', price: 3199, delivery: 'Free delivery', url: 'https://www.flipkart.com/search?q=sony+headphones' },
+      { name: '🏪 Croma', price: 3499, delivery: 'Store pickup', url: 'https://www.croma.com/searchB?q=sony+headphones' },
+    ]
+  },
+  'laptop': {
+    name: 'HP Laptop 15 Core i5',
+    img: '💻',
+    color: '#0096d6',
+    stores: [
+      { name: '🛒 Flipkart', price: 42990, delivery: 'Free delivery', url: 'https://www.flipkart.com/search?q=hp+laptop', best: true },
+      { name: '📦 Amazon', price: 44990, delivery: 'Prime · 2 days', url: 'https://www.amazon.in/s?k=hp+laptop' },
+      { name: '🏠 Reliance Digital', price: 47990, delivery: 'Store pickup', url: 'https://www.reliancedigital.in/search?q=laptop' },
+    ]
+  },
+  'samsung galaxy s24': {
+    name: 'Samsung Galaxy S24',
+    img: '📱',
+    color: '#1428a0',
+    stores: [
+      { name: '📦 Amazon', price: 54999, delivery: 'Prime · Same day', url: 'https://www.amazon.in/s?k=samsung+galaxy+s24', best: true },
+      { name: '🛒 Flipkart', price: 56499, delivery: 'Free delivery', url: 'https://www.flipkart.com/search?q=samsung+galaxy+s24' },
+      { name: '🏠 Reliance Digital', price: 58990, delivery: 'Store pickup', url: 'https://www.reliancedigital.in/search?q=samsung+s24' },
+    ]
+  },
+  "levi's jeans": {
+    name: "Levi's 511 Slim Fit Jeans",
+    img: '👖',
+    color: '#1a3a6b',
+    stores: [
+      { name: '👗 Myntra', price: 2499, delivery: 'Free · 4 days', url: 'https://www.myntra.com/levis', best: true },
+      { name: '📦 Amazon', price: 2799, delivery: 'Prime · 2 days', url: "https://www.amazon.in/s?k=levis+jeans" },
+      { name: '🛒 Flipkart', price: 2999, delivery: 'Free delivery', url: "https://www.flipkart.com/search?q=levis+jeans" },
+    ]
+  },
+};
 
-  /* ===== MOBILE MENU ===== */
-  function toggleMenu() {
-    const m = document.getElementById('mobileMenu');
-    const h = document.getElementById('hamburger');
-    m.classList.toggle('open');
-    h.classList.toggle('open');
+function getProduct(q) {
+  const query = q.toLowerCase().trim();
+  if (products[query]) return products[query];
+  for (const key of Object.keys(products)) {
+    if (key.includes(query) || query.includes(key.split(' ')[0])) return products[key];
   }
-  function closeMenu() {
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.getElementById('hamburger').classList.remove('open');
-  }
-
-  /* ===== TOAST ===== */
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
-  }
-
-  /* ===== SEARCH ===== */
-  const mockData = {
-    'iphone 15': [
-      { store: '🛒 Flipkart', price: '₹67,999', delivery: 'Free delivery · 2 days', best: true },
-      { store: '📦 Amazon', price: '₹69,499', delivery: 'Prime · Same day', best: false },
-      { store: '🏪 Croma', price: '₹72,990', delivery: 'Store pickup', best: false },
-    ],
-    'macbook air': [
-      { store: '📦 Amazon', price: '₹92,900', delivery: 'Prime · 1 day', best: true },
-      { store: '🛒 Flipkart', price: '₹94,990', delivery: 'Free delivery', best: false },
-      { store: '🏠 Reliance Digital', price: '₹97,990', delivery: 'Store pickup', best: false },
-    ],
-    'nike shoes': [
-      { store: '👗 Myntra', price: '₹3,499', delivery: 'Free · 3 days', best: true },
-      { store: '📦 Amazon', price: '₹3,799', delivery: 'Prime · 1 day', best: false },
-      { store: '🛒 Flipkart', price: '₹3,999', delivery: 'Free delivery', best: false },
-    ],
-    'samsung tv': [
-      { store: '🛒 Flipkart', price: '₹32,990', delivery: 'Free delivery', best: true },
-      { store: '📦 Amazon', price: '₹34,499', delivery: 'Prime · 2 days', best: false },
-      { store: '🏠 Reliance Digital', price: '₹35,990', delivery: 'Store pickup', best: false },
-    ],
-    'basmati rice': [
-      { store: '📦 Amazon', price: '₹189', delivery: 'Prime · Same day', best: true },
-      { store: '🥦 BigBasket', price: '₹199', delivery: 'Express 3hr', best: false },
-      { store: '⚡ Blinkit', price: '₹215', delivery: '10 min delivery', best: false },
-    ],
-    'sony headphones': [
-      { store: '📦 Amazon', price: '₹2,999', delivery: 'Prime · 1 day', best: true },
-      { store: '🛒 Flipkart', price: '₹3,199', delivery: 'Free delivery', best: false },
-      { store: '🏪 Croma', price: '₹3,499', delivery: 'Store pickup', best: false },
-    ],
-    'laptop': [
-      { store: '🛒 Flipkart', price: '₹42,990', delivery: 'Free delivery', best: true },
-      { store: '📦 Amazon', price: '₹44,990', delivery: 'Prime · 2 days', best: false },
-      { store: '🏠 Reliance Digital', price: '₹47,990', delivery: 'Store pickup', best: false },
-    ],
-    'samsung galaxy s24': [
-      { store: '📦 Amazon', price: '₹54,999', delivery: 'Prime · Same day', best: true },
-      { store: '🛒 Flipkart', price: '₹56,499', delivery: 'Free delivery', best: false },
-      { store: '🏠 Reliance Digital', price: '₹58,990', delivery: 'Store pickup', best: false },
-    ],
+  // generic fallback
+  const base = Math.floor(Math.random()*40+10)*1000;
+  return {
+    name: q,
+    img: '🛍️',
+    color: '#00C853',
+    stores: [
+      { name: '📦 Amazon', price: base, delivery: 'Prime · 1 day', url: 'https://www.amazon.in/s?k='+encodeURIComponent(q), best: true },
+      { name: '🛒 Flipkart', price: base+500, delivery: 'Free delivery', url: 'https://www.flipkart.com/search?q='+encodeURIComponent(q) },
+      { name: '📲 Meesho', price: base+1000, delivery: 'Free · 4 days', url: 'https://meesho.com/search?q='+encodeURIComponent(q) },
+    ]
   };
+}
 
-  function getResults(query) {
-    const q = query.toLowerCase().trim();
-    if (mockData[q]) return mockData[q];
-    // fuzzy match
-    for (const key of Object.keys(mockData)) {
-      if (key.includes(q) || q.includes(key.split(' ')[0])) return mockData[key];
-    }
-    // generic fallback
-    const base = Math.floor(Math.random() * 40 + 10) * 1000;
-    return [
-      { store: '📦 Amazon', price: '₹' + base.toLocaleString('en-IN'), delivery: 'Prime · 1 day', best: true },
-      { store: '🛒 Flipkart', price: '₹' + (base + Math.floor(Math.random()*2+1)*500).toLocaleString('en-IN'), delivery: 'Free delivery', best: false },
-      { store: '📲 Meesho', price: '₹' + (base + Math.floor(Math.random()*4+2)*500).toLocaleString('en-IN'), delivery: 'Free delivery · 4 days', best: false },
-    ];
-  }
+function fmt(n) { return '₹' + n.toLocaleString('en-IN'); }
 
-  function doSearch() {
-    const q = document.getElementById('searchInput').value.trim();
-    if (!q) { showToast('❗ Pehle kuch type karo!'); return; }
-    const popup = document.getElementById('searchResult');
-    const inner = document.getElementById('searchResultInner');
-    inner.innerHTML = '<div class="search-loading"><span class="loader"></span> Compare kar raha hoon...</div>';
-    popup.classList.add('visible');
-    setTimeout(() => {
-      const results = getResults(q);
-      const savings = parseInt(results[results.length-1].price.replace(/[₹,]/g,'')) - parseInt(results[0].price.replace(/[₹,]/g,''));
-      inner.innerHTML = `
-        <div class="search-result-header">✅ "${q}" — ${results.length} stores mein compare kiya · Bachao: ₹${savings.toLocaleString('en-IN')}</div>
-        ${results.map((r, i) => `
-          <div class="search-result-row">
-            <span class="store-name">${r.store} ${r.best ? '<span class="best-tag">SASTA</span>' : ''}</span>
-            <div style="text-align:right">
-              <span class="store-price ${r.best ? 'lowest' : ''}">${r.price}</span>
-              <div style="font-size:11px;color:#9ca3af;">${r.delivery}</div>
-            </div>
-          </div>
-        `).join('')}
-        <div style="padding:12px 20px;text-align:center;">
-          <span style="font-size:12px;color:#6b7280;">👆 Click karke seedha store pe jao</span>
+function doSearch() {
+  const q = document.getElementById('heroInput').value.trim();
+  if (!q) { showToast('❗ Pehle kuch type karo!'); return; }
+  const popup = document.getElementById('heroResult');
+  const inner = document.getElementById('heroResultInner');
+  inner.innerHTML = '<div class="search-loading"><span class="loader"></span> Compare kar raha hoon...</div>';
+  popup.classList.add('visible');
+  popup.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  setTimeout(() => {
+    const p = getProduct(q);
+    const sorted = [...p.stores].sort((a,b) => a.price - b.price);
+    const savings = sorted[sorted.length-1].price - sorted[0].price;
+    inner.innerHTML = `
+      <div class="result-header">
+        ✅ "${q}" — ${sorted.length} stores mein compare kiya &nbsp;·&nbsp; Bachao: ${fmt(savings)}
+        <span class="result-close" onclick="document.getElementById('heroResult').classList.remove('visible')">✕</span>
+      </div>
+      <div class="result-product-info">
+        <div class="result-product-img" style="background:${p.color}22;">${p.img}</div>
+        <div>
+          <div class="result-product-name">${p.name}</div>
+          <div class="result-product-sub">Sabse sasta: ${fmt(sorted[0].price)} · Mehenga: ${fmt(sorted[sorted.length-1].price)}</div>
         </div>
-      `;
-    }, 900);
-  }
+      </div>
+      ${sorted.map((s, i) => `
+        <a class="result-row" href="${s.url}" target="_blank" rel="noopener">
+          <span class="result-store">
+            ${s.name}
+            ${i === 0 ? '<span class="best-badge">SASTA</span>' : ''}
+          </span>
+          <div class="result-right">
+            <div class="result-price ${i===0?'best':''}">${fmt(s.price)}</div>
+            <div class="result-delivery">${s.delivery}</div>
+            <div class="result-visit">🔗 Visit karein →</div>
+          </div>
+        </a>
+      `).join('')}
+      <div style="padding:12px 22px;text-align:center;font-size:12px;color:var(--muted);">
+        Store name pe click karo — seedha wahan chale jao
+      </div>
+    `;
+  }, 800);
+}
 
-  function fillSearch(text) {
-    const input = document.getElementById('searchInput');
-    input.value = text;
-    input.focus();
-    document.getElementById('searchResult').classList.remove('visible');
-    document.getElementById('search').scrollIntoView({ behavior: 'smooth' });
-    setTimeout(doSearch, 300);
-  }
+function fillSearch(text) {
+  document.getElementById('heroInput').value = text;
+  document.getElementById('heroResult').classList.remove('visible');
+  document.getElementById('search').scrollIntoView({ behavior: 'smooth' });
+  setTimeout(doSearch, 350);
+}
 
-  document.getElementById('searchInput').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') doSearch();
-  });
+document.getElementById('heroInput').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
 
-  /* ===== SCROLL REVEAL ===== */
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(el => {
-      if (el.isIntersecting) { el.target.classList.add('visible'); observer.unobserve(el.target); }
-    });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+// Navbar scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', scrollY > 10);
+});
+
+// Mobile menu
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+// Toast
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
