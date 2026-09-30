@@ -7,43 +7,57 @@
 <section class="alt" id="team"><div class="w"><div class="head"><div class="k">Cprice team</div><h2>Built with a simple mission.</h2><p>Make online price discovery easier before a customer spends money.</p></div><div class="team"><div class="person"><div class="role">Founder</div><h3>Aditya Rajput</h3><p>Founder of Cprice, responsible for the product vision and direction.</p></div><div class="person"><div class="role">Developer</div><h3>Pradeep Rajput</h3><p>Developer behind the Cprice website, interface and comparison architecture.</p></div></div></div></section></main>
 <footer><div class="w foot"><div><b>Cprice</b> · Compare. Save. Buy smart.</div><div>© <span id="year"></span> Cprice · Built in India 🇮🇳</div></div></footer>
 <script>
-window.CPRICE_API_URL = window.CPRICE_API_URL || '';
-const stores=[['Amazon','AM','https://www.amazon.in/s?k='],['Flipkart','FK','https://www.flipkart.com/search?q='],['Myntra','MY','https://www.myntra.com/'],['Croma','CR','https://www.croma.com/searchB?q='],['Reliance Digital','RD','https://www.reliancedigital.in/search?q='],['Meesho','ME','https://www.meesho.com/search?q=']];const q=document.getElementById('q'),g=document.getElementById('storesGrid');
-function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function priceOf(x){let v=x?.price??x?.current_price??x?.sale_price??x?.amount??x?.offer_price??x?.product_price;if(typeof v==="number")return v;let n=String(v??"").replace(/[^0-9.]/g,"");return n?Number(n):null}
-function titleOf(x,q){return x?.title||x?.name||x?.product_title||q}
-function urlOf(x){return x?.url||x?.product_url||x?.link||x?.product_link||"#"}
-function normalize(data,q){let arr=[];const walk=v=>{if(Array.isArray(v)){v.forEach(walk);return}if(v&&typeof v==="object"){if((v.title||v.name||v.product_title)&&(priceOf(v)!=null)&&(urlOf(v)!=="#"))arr.push(v);Object.values(v).forEach(walk)}};walk(data);const seen=new Set();return arr.filter(x=>{const k=urlOf(x);if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>priceOf(a)-priceOf(b)).slice(0,12)}
-async function render(v){
- v=v.trim();if(!v)return;
- const live=document.getElementById("liveResults"),offers=document.getElementById("offers");
- live.classList.add("show");
- document.getElementById("resultQuery").textContent='Results for "'+esc(v)+'"';
- document.getElementById("resultCount").textContent="Searching…";
- offers.innerHTML='<div class="loadingOffer"><span class="spin"></span>Fetching live prices…</div>';
- live.scrollIntoView({behavior:"smooth",block:"nearest"});
- const endpoint=window.CPRICE_API_URL;
- if(!endpoint){
-   document.getElementById("resultCount").textContent="Setup required";
-   offers.innerHTML='<div class="loadingOffer">Live price API is not configured yet.</div>';
-   return;
+const stores=[['Amazon','AM','https://www.amazon.in/s?k='],['Flipkart','FK','https://www.flipkart.com/search?q='],['Myntra','MY','https://www.myntra.com/'],['Croma','CR','https://www.croma.com/searchB?q='],['Reliance Digital','RD','https://www.reliancedigital.in/search?q='],['Meesho','ME','https://www.meesho.com/search?q=']];
+const q=document.getElementById('q'),g=document.getElementById('storesGrid');
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function money(v){return Number(String(v).replace(/[^0-9.]/g,''))}
+function storeInfo(t){
+ t=t.toLowerCase();
+ if(t.includes('amazon'))return ['Amazon','AM','https://www.amazon.in/s?k='];
+ if(t.includes('flipkart'))return ['Flipkart','FK','https://www.flipkart.com/search?q='];
+ if(t.includes('myntra'))return ['Myntra','MY','https://www.myntra.com/'];
+ if(t.includes('croma'))return ['Croma','CR','https://www.croma.com/searchB?q='];
+ if(t.includes('reliance'))return ['Reliance Digital','RD','https://www.reliancedigital.in/search?q='];
+ if(t.includes('meesho'))return ['Meesho','ME','https://www.meesho.com/search?q='];
+ return null;
+}
+function parseShopping(text,query){
+ const out=[]; const lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+ for(let i=0;i<lines.length;i++){
+   const line=lines[i];
+   const m=line.match(/(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d+)?)/i);
+   if(!m)continue;
+   const price=money(m[1]); if(!price||price<100)continue;
+   const chunk=lines.slice(Math.max(0,i-3),Math.min(lines.length,i+4)).join(' ');
+   const st=storeInfo(chunk); if(!st)continue;
+   let title=chunk.replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').slice(0,130);
+   if(!title)title=query;
+   if(!out.some(x=>x.store===st[0] && Math.abs(x.price-price)<1))out.push({store:st[0],code:st[1],price,title,url:st[2]+encodeURIComponent(query)});
  }
+ return out.sort((x,y)=>x.price-y.price).slice(0,10);
+}
+async function render(v){
+ v=v.trim(); if(!v)return;
+ const live=document.getElementById('liveResults'),offers=document.getElementById('offers');
+ live.classList.add('show'); document.getElementById('resultQuery').textContent='Results for "'+esc(v)+'"';
+ document.getElementById('resultCount').textContent='Searching…';
+ offers.innerHTML='<div class="loadingOffer"><span class="spin"></span>Finding live shopping prices…</div>';
+ live.scrollIntoView({behavior:'smooth',block:'nearest'});
  try{
-   const sep=endpoint.includes("?")?"&":"?";
-   const r=await fetch(endpoint+sep+"q="+encodeURIComponent(v),{headers:{Accept:"application/json"}});
-   if(!r.ok)throw new Error("HTTP "+r.status);
-   const data=await r.json();
-   const items=normalize(data,v);
-   if(!items.length)throw new Error("No priced offers");
-   document.getElementById("resultCount").textContent=items.length+" live offers";
-   offers.innerHTML=items.map((x,i)=>{
-     const p=priceOf(x);
-     return '<a class="offer '+(i===0?"best":"")+'" style="animation-delay:'+i*60+'ms" target="_blank" rel="noopener noreferrer" href="'+esc(urlOf(x))+'"><div class="storeIcon">'+(i===0?"BEST":"OFFER")+'</div><div class="storeInfo"><strong>'+esc(titleOf(x,v))+'</strong><small>Live price</small></div><div class="offerPrice"><strong>₹'+p.toLocaleString("en-IN")+'</strong><small>'+(i===0?"LOWEST PRICE":"Available offer")+'</small></div><div class="visit">Buy ↗</div></a>'
-   }).join("");
+   const target='https://www.google.com/search?tbm=shop&q='+encodeURIComponent(v)+'&hl=en&gl=in';
+   const r=await fetch('https://r.jina.ai/'+target,{headers:{Accept:'text/plain'}});
+   if(!r.ok)throw new Error('reader');
+   const text=await r.text();
+   const items=parseShopping(text,v);
+   if(!items.length)throw new Error('no results');
+   document.getElementById('resultCount').textContent=items.length+' live offers';
+   offers.innerHTML=items.map((x,i)=>'<a class="offer '+(i===0?'best':'')+'" style="animation-delay:'+i*70+'ms" target="_blank" rel="noopener noreferrer" href="'+esc(x.url)+'"><div class="storeIcon">'+x.code+'</div><div class="storeInfo"><strong>'+esc(x.store)+'</strong><small>'+esc(x.title)+'</small></div><div class="offerPrice"><strong>₹'+x.price.toLocaleString('en-IN')+'</strong><small>'+(i===0?'LOWEST FOUND':'Live shopping result')+'</small></div><div class="visit">View ↗</div></a>').join('');
  }catch(e){
-   document.getElementById("resultCount").textContent="Unavailable";
-   offers.innerHTML='<div class="loadingOffer">Live price service is unavailable right now.</div>';
+   document.getElementById('resultCount').textContent='No live results';
+   offers.innerHTML='<div class="loadingOffer">Live shopping data could not be loaded. Try the search again.</div>';
  }
 }
-document.getElementById('form').onsubmit=e=>{e.preventDefault();render(q.value)};document.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>{q.value=b.dataset.q;render(q.value)});render('iPhone 15');document.getElementById('year').textContent=new Date().getFullYear();
+document.getElementById('form').onsubmit=e=>{e.preventDefault();render(q.value)};
+document.querySelectorAll('.chips button').forEach(x=>x.onclick=()=>{q.value=x.dataset.q;render(q.value)});
+document.getElementById('year').textContent=new Date().getFullYear();
 </script></body></html>
