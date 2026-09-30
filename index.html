@@ -62,15 +62,20 @@ async function render(v){
  offers.innerHTML='<div class="loadingOffer"><span class="spin"></span>Fetching live prices…</div>';
  live.scrollIntoView({behavior:'smooth',block:'nearest'});
  try{
-   if(!API_BASE)throw new Error('API not configured');
-   const rr=await fetch(API_BASE+'/search?q='+encodeURIComponent(v),{headers:{Accept:'application/json'}});
-   if(!rr.ok)throw new Error('HTTP '+rr.status);
-   const data=await rr.json(); const items=normalizeLive(data,v); if(!items.length)throw new Error('No offers');
-   document.getElementById('resultCount').textContent=items.length+' live offers';
-   offers.innerHTML=items.map((x,i)=>'<a class="offer '+(i===0?'best':'')+'" style="animation-delay:'+i*70+'ms" target="_blank" rel="noopener noreferrer" href="'+esc(x.url)+'"><div class="storeIcon">'+x.code+'</div><div class="storeInfo"><strong>'+esc(x.store)+'</strong><small>'+esc(x.title)+'</small></div><div class="offerPrice"><strong>₹'+x.price.toLocaleString('en-IN')+'</strong><small>'+(i===0?'LOWEST FOUND':'Live price')+'</small></div><div class="visit">View ↗</div></a>').join('');
+   if(API_BASE){
+     const rr=await fetch(API_BASE+'/search?q='+encodeURIComponent(v),{headers:{Accept:'application/json'}});
+     if(!rr.ok)throw new Error('HTTP '+rr.status);
+     const data=await rr.json(); const items=normalizeLive(data,v); if(!items.length)throw new Error('No offers');
+     document.getElementById('resultCount').textContent=items.length+' live offers';
+     offers.innerHTML=items.map((x,i)=>'<a class="offer '+(i===0?'best':'')+'" style="animation-delay:'+i*70+'ms" target="_blank" rel="noopener noreferrer" href="'+esc(x.url)+'"><div class="storeIcon">'+x.code+'</div><div class="storeInfo"><strong>'+esc(x.store)+'</strong><small>'+esc(x.title)+'</small></div><div class="offerPrice"><strong>₹'+x.price.toLocaleString('en-IN')+'</strong><small>'+(i===0?'LOWEST FOUND':'Live price')+'</small></div><div class="visit">View ↗</div></a>').join('');
+   }else{
+     const items=stores.map(([store,code,url])=>({store,code,url:url+encodeURIComponent(v),title:'Open live '+store+' search'}));
+     document.getElementById('resultCount').textContent='Live store searches';
+     offers.innerHTML=items.map((x,i)=>'<a class="offer" style="animation-delay:'+i*70+'ms" target="_blank" rel="noopener noreferrer" href="'+esc(x.url)+'"><div class="storeIcon">'+x.code+'</div><div class="storeInfo"><strong>'+esc(x.store)+'</strong><small>'+esc(x.title)+'</small></div><div class="offerPrice"><strong>Live ↗</strong><small>Current store price</small></div><div class="visit">View ↗</div></a>').join('');
+   }
  }catch(e){
    document.getElementById('resultCount').textContent='Live source unavailable';
-   offers.innerHTML='<div class="loadingOffer">Live price source is not connected yet.</div>';
+   offers.innerHTML='<div class="loadingOffer">Opening live store searches…</div>';
  }
 }
 document.getElementById('form').onsubmit=e=>{e.preventDefault();render(q.value)};
