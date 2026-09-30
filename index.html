@@ -36,26 +36,41 @@ function parseShopping(text,query){
  }
  return out.sort((x,y)=>x.price-y.price).slice(0,10);
 }
+const API_BASE=(window.CPRICE_API_URL||'').replace(/\/$/,'');
+function flattenOffers(value,out=[]){
+ if(!value)return out;
+ if(Array.isArray(value)){for(const x of value)flattenOffers(x,out);return out}
+ if(typeof value!=='object')return out;
+ const keys=Object.keys(value).map(k=>k.toLowerCase());
+ const priceKey=keys.find(k=>['price','current_price','sale_price','selling_price','amount'].includes(k));
+ const titleKey=keys.find(k=>['title','name','product_name'].includes(k));
+ const urlKey=keys.find(k=>['url','link','product_url','product_link'].includes(k));
+ if(priceKey){const raw=value[Object.keys(value).find(k=>k.toLowerCase()===priceKey)];const p=money(raw);if(p&&p>=100){const title=titleKey?value[Object.keys(value).find(k=>k.toLowerCase()===titleKey)]:'';const url=urlKey?value[Object.keys(value).find(k=>k.toLowerCase()===urlKey)]:'';out.push({price:p,title:String(title||''),url:String(url||'')})}}
+ for(const k of Object.keys(value)){if(typeof value[k]==='object')flattenOffers(value[k],out)}
+ return out;
+}
+function normalizeLive(data,query){
+ const raw=flattenOffers(data,[]); const seen=new Set(); const out=[];
+ for(const x of raw){const st=storeInfo((x.title||'')+' '+(x.url||''));const store=st?st[0]:'Amazon';const code=st?st[1]:'AM';const fallback=st?st[2]:'https://www.amazon.in/s?k=';const url=x.url&&/^https?:\\/\\//i.test(x.url)?x.url:fallback+encodeURIComponent(query);const key=store+'|'+x.price;if(seen.has(key))continue;seen.add(key);out.push({store,code,price:x.price,title:x.title||query,url})}
+ return out.sort((a,b)=>a.price-b.price).slice(0,20);
+}
 async function render(v){
  v=v.trim(); if(!v)return;
  const live=document.getElementById('liveResults'),offers=document.getElementById('offers');
  live.classList.add('show'); document.getElementById('resultQuery').textContent='Results for "'+esc(v)+'"';
  document.getElementById('resultCount').textContent='Searching…';
- offers.innerHTML='<div class="loadingOffer"><span class="spin"></span>Finding live shopping prices…</div>';
+ offers.innerHTML='<div class="loadingOffer"><span class="spin"></span>Fetching live prices…</div>';
  live.scrollIntoView({behavior:'smooth',block:'nearest'});
  try{
-   const target='https://www.google.com/search?tbm=shop&q='+encodeURIComponent(v)+'&hl=en&gl=in';
-   let text='';
-   const readers=['https://r.jina.ai/http://www.google.com/search?tbm=shop&q='+encodeURIComponent(v)+'&hl=en&gl=in','https://r.jina.ai/https://www.google.com/search?tbm=shop&q='+encodeURIComponent(v)+'&hl=en&gl=in'];
-   for(const reader of readers){try{const rr=await fetch(reader,{headers:{Accept:'text/plain'}});if(rr.ok){text=await rr.text();if(text.length>200)break}}catch(_){} }
-   if(!text)throw new Error('reader');
-   const items=parseShopping(text,v);
-   if(!items.length)throw new Error('no results');
+   if(!API_BASE)throw new Error('API not configured');
+   const rr=await fetch(API_BASE+'/search?q='+encodeURIComponent(v),{headers:{Accept:'application/json'}});
+   if(!rr.ok)throw new Error('HTTP '+rr.status);
+   const data=await rr.json(); const items=normalizeLive(data,v); if(!items.length)throw new Error('No offers');
    document.getElementById('resultCount').textContent=items.length+' live offers';
-   offers.innerHTML=items.map((x,i)=>'<a class="offer '+(i===0?'best':'')+'" style="animation-delay:'+i*70+'ms" target="_blank" rel="noopener noreferrer" href="'+esc(x.url)+'"><div class="storeIcon">'+x.code+'</div><div class="storeInfo"><strong>'+esc(x.store)+'</strong><small>'+esc(x.title)+'</small></div><div class="offerPrice"><strong>₹'+x.price.toLocaleString('en-IN')+'</strong><small>'+(i===0?'LOWEST FOUND':'Live shopping result')+'</small></div><div class="visit">View ↗</div></a>').join('');
+   offers.innerHTML=items.map((x,i)=>'<a class="offer '+(i===0?'best':'')+'" style="animation-delay:'+i*70+'ms" target="_blank" rel="noopener noreferrer" href="'+esc(x.url)+'"><div class="storeIcon">'+x.code+'</div><div class="storeInfo"><strong>'+esc(x.store)+'</strong><small>'+esc(x.title)+'</small></div><div class="offerPrice"><strong>₹'+x.price.toLocaleString('en-IN')+'</strong><small>'+(i===0?'LOWEST FOUND':'Live price')+'</small></div><div class="visit">View ↗</div></a>').join('');
  }catch(e){
-   document.getElementById('resultCount').textContent='No live results';
-   offers.innerHTML='<div class="loadingOffer">Live shopping data could not be loaded. Try the search again.</div>';
+   document.getElementById('resultCount').textContent='Live source unavailable';
+   offers.innerHTML='<div class="loadingOffer">Live price source is not connected yet.</div>';
  }
 }
 document.getElementById('form').onsubmit=e=>{e.preventDefault();render(q.value)};
